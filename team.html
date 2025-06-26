@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Our Team | Beans Studio</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Exo+2:wght@300;400;600;700&family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #4a00e0;
+        --secondary: #00c9ff;
+        --accent: #00ff9d;
+        --dark: #0f0c29;
+        --light: #f0f8ff;
+        --pixel-size: 2px;
+        --transition-speed: 0.3s;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Exo 2", sans-serif;
+        background: linear-gradient(135deg, var(--dark) 0%, #1a1a2e 100%);
+        color: var(--light);
+        overflow-x: hidden;
+        line-height: 1.7;
+        min-height: 100vh;
+        position: relative;
+        padding-left: 80px; /* Space for vertical nav */
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 10% 20%,
+            rgba(74, 0, 224, 0.1) 0%,
+            transparent 20%
+          ),
+          radial-gradient(
+            circle at 90% 80%,
+            rgba(0, 201, 255, 0.1) 0%,
+            transparent 20%
+          );
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      /* Fixed Navigation Bar */
+      .vertical-nav {
+        position: fixed;
+        top: 50%;
+        left: 20px;
+        transform: translateY(-50%);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        transition: var(--transition-speed);
+      }
+
+      .nav-item {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(15, 12, 41, 0.7);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--light);
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all var(--transition-speed) ease;
+        position: relative;
+        border: 2px solid rgba(0, 201, 255, 0.3);
+        box-shadow: 0 0 15px rgba(0, 201, 255, 0.2);
+        overflow: hidden;
+        text-decoration: none;
+      }
+
+      .nav-item:hover {
+        width: 200px;
+        border-radius: 30px;
+        background: rgba(15, 12, 41, 0.9);
+        border-color: var(--accent);
+        box-shadow: 0 0 25px rgba(0, 255, 157, 0.4);
+      }
+
+      .nav-text {
+        position: absolute;
+        left: 75px;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateX(20px);
+        transition: all var(--transition-speed) ease;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+        width: 120px;
+        text-align: left;
+      }
+
+      .nav-item:hover .nav-text {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .nav-item i {
+        position: absolute;
+        left: 15px;
+        transition: left var(--transition-speed) ease;
+      }
+
+      .nav-item:hover i {
+        left: 20px;
+      }
+
+      .nav-item.active {
+        background: var(--primary);
+        transform: scale(1.1);
+      }
+
+      .nav-item.active .nav-text {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      /* Page Container */
+      .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 80px 40px 40px;
+        min-height: 100vh;
+      }
+
+      /* Header */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        background: rgba(15, 12, 41, 0.8);
+        backdrop-filter: blur(10px);
+        border-bottom: 2px solid var(--secondary);
+        position: sticky;
+        top: 0;
+        z-index: 900;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border-radius: 100px;
+      }
+
+      .logo img {
+        height: 80px;
+        width: auto;
+        transition: transform 0.5s ease;
+        border-radius: 100px;
+      }
+
+      .logo:hover img {
+        transform: rotate(15deg);
+      }
+
+      .logo-text {
+        font-family: "Orbitron", sans-serif;
+        font-size: 2.2rem;
+        background: linear-gradient(to right, var(--secondary), var(--accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+
+      /* Hero Section */
+      .hero {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 50vh;
+        text-align: center;
+        position: relative;
+        padding: 40px 20px;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at center,
+            rgba(74, 0, 224, 0.1) 0%,
+            transparent 70%
+          ),
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><rect fill="rgba(0,201,255,0.05)" width="100" height="100"/></svg>');
+        z-index: -1;
+      }
+
+      .hero h1 {
+        font-family: "Orbitron", sans-serif;
+        font-size: 4.5rem;
+        margin-bottom: 20px;
+        background: linear-gradient(to right, var(--light), var(--accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 20px rgba(0, 201, 255, 0.5);
+      }
+
+      .hero p {
+        font-size: 1.4rem;
+        max-width: 800px;
+        margin-bottom: 40px;
+        opacity: 0.9;
+      }
+
+      .cta-container {
+        display: flex;
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .cta-button {
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        border: none;
+        cursor: pointer;
+      }
+
+      .primary-cta {
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        color: white;
+        box-shadow: 0 5px 25px rgba(74, 0, 224, 0.5);
+      }
+
+      .secondary-cta {
+        background: transparent;
+        color: var(--secondary);
+        border: 2px solid var(--secondary);
+      }
+
+      .cta-button:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 201, 255, 0.6);
+      }
+
+      .cta-button::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateX(-100%);
+        transition: transform 0.4s ease;
+      }
+
+      .cta-button:hover::after {
+        transform: translateX(0);
+      }
+
+      /* Team Section */
+      .team-intro {
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto 80px;
+      }
+
+      .team-intro h2 {
+        font-family: "Orbitron", sans-serif;
+        font-size: 2.8rem;
+        margin-bottom: 30px;
+        color: var(--accent);
+        position: relative;
+      }
+
+      .team-intro h2::after {
+        content: "";
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100px;
+        height: 4px;
+        background: var(--secondary);
+        border-radius: 2px;
+      }
+
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px;
+        margin-bottom: 80px;
+      }
+
+      .team-member {
+        background: rgba(25, 20, 60, 0.6);
+        border-radius: 20px;
+        padding: 40px 30px;
+        text-align: center;
+        transition: all 0.4s ease;
+        border: 1px solid rgba(0, 201, 255, 0.2);
+        backdrop-filter: blur(10px);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .team-member:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        border-color: var(--accent);
+      }
+
+      .team-member::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
+      }
+
+      .team-member:hover::before {
+        transform: scaleX(1);
+      }
+
+      .member-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin: 0 auto 25px;
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        color: var(--light);
+        overflow: hidden;
+        border: 3px solid var(--accent);
+        position: relative;
+      }
+
+      .member-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .team-member h3 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+        color: var(--light);
+      }
+
+      .team-member .role {
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+      }
+
+      .team-member p {
+        margin-bottom: 25px;
+        color: rgba(240, 248, 255, 0.8);
+        font-size: 1.1rem;
+        min-height: 80px;
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .social-links a {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(0, 201, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--light);
+        transition: all 0.3s ease;
+      }
+
+      .social-links a:hover {
+        background: var(--accent);
+        transform: translateY(-5px);
+        color: var(--dark);
+      }
+
+      /* Team Values Section */
+      .values {
+        background: rgba(15, 12, 41, 0.5);
+        border-radius: 30px;
+        padding: 80px 40px;
+        margin: 80px 0;
+        border: 1px solid rgba(0, 201, 255, 0.2);
+        text-align: center;
+      }
+
+      .values h2 {
+        font-family: "Orbitron", sans-serif;
+        font-size: 2.8rem;
+        margin-bottom: 60px;
+        color: var(--accent);
+      }
+
+      .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px;
+      }
+
+      .value-card {
+        padding: 30px;
+        border-radius: 20px;
+        background: rgba(25, 20, 60, 0.4);
+        border: 1px solid rgba(0, 201, 255, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .value-card:hover {
+        transform: translateY(-10px);
+        border-color: var(--accent);
+        box-shadow: 0 15px 30px rgba(0, 201, 255, 0.2);
+      }
+
+      .value-icon {
+        font-size: 3.5rem;
+        margin-bottom: 25px;
+        background: linear-gradient(to bottom, var(--secondary), var(--accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .value-card h3 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: var(--light);
+      }
+
+      /* Join Section */
+      .join-team {
+        text-align: center;
+        padding: 80px 0;
+      }
+
+      .join-team h2 {
+        font-family: "Orbitron", sans-serif;
+        font-size: 2.8rem;
+        margin-bottom: 30px;
+        color: var(--accent);
+      }
+
+      .join-team p {
+        max-width: 700px;
+        margin: 0 auto 40px;
+        font-size: 1.2rem;
+      }
+
+      /* Footer */
+      footer {
+        background: rgba(10, 8, 30, 0.9);
+        padding: 80px 0 30px;
+        border-top: 2px solid var(--secondary);
+        margin-top: 100px;
+      }
+
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 50px;
+        margin-bottom: 60px;
+      }
+
+      .footer-column h3 {
+        font-size: 1.6rem;
+        margin-bottom: 25px;
+        color: var(--accent);
+        position: relative;
+        padding-bottom: 15px;
+      }
+
+      .footer-column h3::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: var(--secondary);
+        border-radius: 2px;
+      }
+
+      .footer-column p {
+        margin-bottom: 25px;
+        color: rgba(240, 248, 255, 0.8);
+      }
+
+      .footer-column ul {
+        list-style: none;
+      }
+
+      .footer-column ul li {
+        margin-bottom: 15px;
+      }
+
+      .footer-column ul li a {
+        color: rgba(240, 248, 255, 0.8);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .footer-column ul li a:hover {
+        color: var(--accent);
+        transform: translateX(5px);
+      }
+
+      .social-icons {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+      }
+
+      .social-icons a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: rgba(0, 201, 255, 0.1);
+        color: var(--light);
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+
+      .social-icons a:hover {
+        background: var(--accent);
+        transform: translateY(-5px);
+        color: var(--dark);
+      }
+
+      .copyright {
+        text-align: center;
+        padding-top: 40px;
+        border-top: 1px solid rgba(0, 201, 255, 0.2);
+        color: rgba(240, 248, 255, 0.6);
+        font-size: 1rem;
+      }
+
+      /* Animations */
+      @keyframes float {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      .floating {
+        animation: float 6s ease-in-out infinite;
+      }
+
+      .floating-2 {
+        animation: float 8s ease-in-out infinite;
+        animation-delay: 1s;
+      }
+
+      .floating-3 {
+        animation: float 7s ease-in-out infinite;
+        animation-delay: 2s;
+      }
+
+      /* Responsive */
+      @media (max-width: 992px) {
+        body {
+          padding-left: 0;
+        }
+
+        .vertical-nav {
+          display: none;
+        }
+
+        .hero h1 {
+          font-size: 3.5rem;
+        }
+
+        .cta-container {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.8rem;
+        }
+
+        .team-intro h2 {
+          font-size: 2.2rem;
+        }
+
+        .team-member {
+          padding: 30px 20px;
+        }
+
+        header {
+          padding: 15px 20px;
+        }
+
+        .logo-text {
+          font-size: 1.8rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Vertical Navigation - Left Side -->
+    <div class="vertical-nav">
+      <a href="index.html" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span class="nav-text">Home</span>
+      </a>
+
+      <a href="about.html" class="nav-item">
+        <i class="fas fa-info-circle"></i>
+        <span class="nav-text">About</span>
+      </a>
+
+      <a href="game.html" class="nav-item">
+        <i class="fas fa-gamepad"></i>
+        <span class="nav-text">Our Game</span>
+      </a>
+
+      <a href="team.html" class="nav-item active">
+        <i class="fas fa-users"></i>
+        <span class="nav-text">Our Team</span>
+      </a>
+
+      <a href="roadmap.html" class="nav-item">
+        <i class="fas fa-map"></i>
+        <span class="nav-text">Roadmap</span>
+      </a>
+
+      <a href="blog.html" class="nav-item">
+        <i class="fas fa-blog"></i>
+        <span class="nav-text">Dev Blog</span>
+      </a>
+
+      <a href="contact.html" class="nav-item">
+        <i class="fas fa-envelope"></i>
+        <span class="nav-text">Contact</span>
+      </a>
+    </div>
+
+    <!-- Header -->
+    <header>
+      <div class="logo">
+        <img src="logo.png" alt="Beans Studio Logo" />
+        <div class="logo-text">BEANS STUDIO</div>
+      </div>
+      <div class="cta-container">
+        <a href="#" class="cta-button primary-cta">Pre-register Now</a>
+      </div>
+    </header>
+
+    <!-- Page Container -->
+    <div class="page-container">
+      <!-- Team Page Content -->
+      <div id="team" class="page active">
+        <section class="hero">
+          <h1>MEET THE BEANS</h1>
+          <p>The passionate team behind Shields and Trebuchets</p>
+        </section>
+
+        <section class="team-intro">
+          <h2>OUR DEVELOPMENT TEAM</h2>
+          <p>
+            We're a small but dedicated team of game enthusiasts based in
+            Belgium, united by our love for pixel art and strategic gameplay.
+            Each member brings unique skills to create an unforgettable gaming
+            experience.
+          </p>
+        </section>
+
+        <div class="team-grid">
+          <div class="team-member floating">
+            <div class="member-image">
+              <span>DPB</span>
+            </div>
+            <h3>Diego Portillo Beckand</h3>
+            <div class="role">Head of Programming</div>
+            <p>
+              As the Head of Programming, I bring extensive experience in game
+              development and will be responsible for both the website and the
+              game itself, utilizing Unity to create an engaging experience for
+              players.
+            </p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="https://github.com/HackerDpro"><i class="fab fa-github"></i></a>
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+          </div>
+
+          <div class="team-member floating-2">
+            <div class="member-image">
+              <span>LB</span>
+            </div>
+            <h3>Levi Boons</h3>
+            <div class="role">Head of 3D Models</div>
+            <p>
+              Levi is in charge of creating and implementing 3D models in the
+              game. His expertise ensures that every model is accurately placed
+              to enhance the overall gameplay experience.
+            </p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-artstation"></i></a>
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+          </div>
+
+          <div class="team-member floating-3">
+            <div class="member-image">
+              <span>PZ</span>
+            </div>
+            <h3>Piotr Zwarycz</h3>
+            <div class="role">Social Media Optimizer</div>
+            <p>
+              Piotr focuses on optimizing our social media presence to engage
+              with our audience. While he is still ramping up, his contributions
+              will help us build a strong community around our game.
+            </p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-blog"></i></a>
+            </div>
+          </div>
+
+          <div class="team-member floating">
+            <div class="member-image">
+              <span>JN</span>
+            </div>
+            <h3>Jonas Nijns</h3>
+            <div class="role">Character and Environment Artist</div>
+            <p>
+              Jonas is responsible for designing characters and maps through his
+              artistic drawings. His work provides the foundation for Levi to
+              transform these designs into stunning 3D models.
+            </p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-artstation"></i></a>
+            </div>
+          </div>
+
+          <div class="team-member floating-2">
+            <div class="member-image">
+              <span>JHV</span>
+            </div>
+            <h3>Jonas HV</h3>
+            <div class="role">Junior Programmer</div>
+            <p>
+              Jonas will assist in programming alongside me. Although he is less
+              experienced and just starting out, his enthusiasm and willingness
+              to learn will be valuable to our development process.
+            </p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-github"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+          </div>
+
+          <div class="team-member floating-3">
+            <div class="member-image">
+              <span>?</span>
+            </div>
+            <h3>Future Teammate</h3>
+            <div class="role">Could This Be You?</div>
+            <p>
+              We're always looking for passionate developers to join our team.
+              Think you'd be a good fit?
+            </p>
+            <div class="social-links">
+              <a
+                href="contact.html"
+                class="cta-button secondary-cta"
+                style="padding: 30px 35px; font-size: 1rem"
+                >Join Us</a
+              >
+            </div>
+          </div>
+        </div>
+
+        <section class="values">
+          <h2>OUR TEAM VALUES</h2>
+          <div class="values-grid">
+            <div class="value-card">
+              <div class="value-icon">
+                <i class="fas fa-lightbulb"></i>
+              </div>
+              <h3>Creativity First</h3>
+              <p>
+                We encourage bold ideas and innovative solutions. Every team
+                member has a voice in shaping our games.
+              </p>
+            </div>
+
+            <div class="value-card">
+              <div class="value-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <h3>Collaboration</h3>
+              <p>
+                We believe the best games are made through teamwork. Regular
+                brainstorming sessions keep us aligned.
+              </p>
+            </div>
+
+            <div class="value-card">
+              <div class="value-icon">
+                <i class="fas fa-heart"></i>
+              </div>
+              <h3>Passion for Games</h3>
+              <p>
+                We're not just developers - we're gamers. This passion drives
+                every decision we make in development.
+              </p>
+            </div>
+
+            <div class="value-card">
+              <div class="value-icon">
+                <i class="fas fa-medal"></i>
+              </div>
+              <h3>Quality Focus</h3>
+              <p>
+                From code to artwork, we maintain high standards. We polish
+                until it shines.
+              </p>
+            </div>
+
+            <div class="value-card">
+              <div class="value-icon">
+                <i class="fas fa-balance-scale"></i>
+              </div>
+              <h3>Work-Life Balance</h3>
+              <p>
+                Healthy developers create better games. We value sustainable
+                development practices.
+              </p>
+            </div>
+
+            <div class="value-card">
+              <div class="value-icon">
+                <i class="fas fa-laugh-beam"></i>
+              </div>
+              <h3>Have Fun</h3>
+              <p>
+                Game development should be enjoyable. We maintain a positive,
+                supportive environment.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="join-team">
+          <h2>JOIN OUR DEVELOPMENT JOURNEY</h2>
+          <p>
+            We're a passionate team always looking for talented individuals to
+            help bring our vision to life. Whether you're a developer, artist,
+            or game enthusiast, there might be a place for you at Beans Studio.
+          </p>
+          <div class="cta-container">
+            <a href="contact.html" class="cta-button primary-cta"
+              >Contact Us About Opportunities</a
+            >
+            <a href="blog.html" class="cta-button secondary-cta"
+              >Follow Our Development Blog</a
+            >
+          </div>
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <footer>
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>Beans Studio</h3>
+            <p>Creating pixel-perfect adventures with passion.</p>
+            <div class="social-icons">
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-discord"></i></a>
+              <a href="instagram.com/beansstudioofficial"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a
+                href="https://www.youtube.com/@BeansStudio-yt?sub_confirmation=1"
+                ><i class="fab fa-youtube"></i
+              ></a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+              <li>
+                <a href="index.html"><i class="fas fa-arrow-right"></i> Home</a>
+              </li>
+              <li>
+                <a href="about.html"
+                  ><i class="fas fa-arrow-right"></i> About Us</a
+                >
+              </li>
+              <li>
+                <a href="game.html"
+                  ><i class="fas fa-arrow-right"></i> Our Game</a
+                >
+              </li>
+              <li>
+                <a href="team.html"
+                  ><i class="fas fa-arrow-right"></i> Our Team</a
+                >
+              </li>
+              <li>
+                <a href="contact.html"
+                  ><i class="fas fa-arrow-right"></i> Contact</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Game Info</h3>
+            <ul>
+              <li>
+                <a href="features.html"
+                  ><i class="fas fa-arrow-right"></i> Features</a
+                >
+              </li>
+              <li>
+                <a href="blog.html"
+                  ><i class="fas fa-arrow-right"></i> Development Blog</a
+                >
+              </li>
+              <li>
+                <a href="roadmap.html"
+                  ><i class="fas fa-arrow-right"></i> Roadmap</a
+                >
+              </li>
+              <li>
+                <a href="faq.html"><i class="fas fa-arrow-right"></i> FAQ</a>
+              </li>
+              <li>
+                <a href="support.html"
+                  ><i class="fas fa-arrow-right"></i> Support</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Contact Us</h3>
+            <ul>
+              <li>
+                <a href="mailto:dportillobeckand@gmail.com"
+                  ><i class="fas fa-envelope"></i> dportillobeckand@gmail.com</a
+                >
+              </li>
+              <li>
+                <a href="#"><i class="fas fa-map-marker-alt"></i> Belgium</a>
+              </li>
+              <li>
+                <a href="tel:+32456101381"
+                  ><i class="fas fa-phone"></i> +32 456 101 381</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          &copy; 2025 Beans Studio. All rights reserved. Shields and Trebuchets
+          is a trademark of Beans Studio.
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      // Highlight active page in navigation
+      document.addEventListener("DOMContentLoaded", function () {
+        const currentPage = window.location.pathname.split("/").pop();
+        const navItems = document.querySelectorAll(".nav-item");
+
+        navItems.forEach((item) => {
+          const itemHref = item.getAttribute("href");
+          if (itemHref === currentPage) {
+            item.classList.add("active");
+          }
+        });
+      });
+
+      // Particle background effect
+      document.addEventListener("DOMContentLoaded", function () {
+        const container = document.body;
+        const particleCount = 30;
+
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement("div");
+          particle.style.position = "fixed";
+          particle.style.width = Math.random() * 5 + 2 + "px";
+          particle.style.height = particle.style.width;
+          particle.style.background =
+            i % 2 === 0 ? "rgba(0, 201, 255, 0.5)" : "rgba(0, 255, 157, 0.5)";
+          particle.style.borderRadius = "50%";
+          particle.style.top = Math.random() * 100 + "vh";
+          particle.style.left = Math.random() * 100 + "vw";
+          particle.style.zIndex = "-1";
+          particle.style.pointerEvents = "none";
+
+          container.appendChild(particle);
+
+          // Animate particles
+          animateParticle(particle);
+        }
+
+        function animateParticle(element) {
+          const startX = parseInt(element.style.left);
+          const startY = parseInt(element.style.top);
+          const amplitude = 30 + Math.random() * 70;
+          const duration = 3000 + Math.random() * 5000;
+
+          let startTime = null;
+
+          function moveParticle(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const progress = timestamp - startTime;
+
+            // Move in a circular pattern
+            const x =
+              startX +
+              Math.sin((progress / duration) * Math.PI * 2) * amplitude;
+            const y =
+              startY +
+              Math.cos((progress / duration) * Math.PI * 2) * amplitude;
+
+            element.style.left = x + "px";
+            element.style.top = y + "px";
+
+            requestAnimationFrame(moveParticle);
+          }
+
+          requestAnimationFrame(moveParticle);
+        }
+      });
+
+      // Hover effect for team members
+      const teamMembers = document.querySelectorAll(
+        ".team-member, .value-card"
+      );
+      teamMembers.forEach((member) => {
+        member.addEventListener("mouseenter", function () {
+          this.style.transform = "translateY(-15px)";
+          this.style.boxShadow = "0 20px 40px rgba(0, 0, 0, 0.3)";
+          this.style.borderColor = "var(--accent)";
+        });
+
+        member.addEventListener("mouseleave", function () {
+          this.style.transform = "translateY(0)";
+          this.style.boxShadow = "";
+          this.style.borderColor = "rgba(0, 201, 255, 0.2)";
+        });
+      });
+    </script>
+  </body>
+</html>

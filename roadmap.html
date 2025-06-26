@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Development Roadmap | Shields and Trebuchets</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Exo+2:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #4a00e0;
+        --secondary: #00c9ff;
+        --accent: #00ff9d;
+        --dark: #0f0c29;
+        --light: #f0f8ff;
+        --pixel-size: 2px;
+        --transition-speed: 0.3s;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Exo 2", sans-serif;
+        background: linear-gradient(135deg, var(--dark) 0%, #1a1a2e 100%);
+        color: var(--light);
+        overflow-x: hidden;
+        line-height: 1.7;
+        min-height: 100vh;
+        position: relative;
+        padding-left: 80px; /* Space for vertical nav */
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 10% 20%,
+            rgba(74, 0, 224, 0.1) 0%,
+            transparent 20%
+          ),
+          radial-gradient(
+            circle at 90% 80%,
+            rgba(0, 201, 255, 0.1) 0%,
+            transparent 20%
+          );
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      /* Fixed Navigation Bar */
+      .vertical-nav {
+        position: fixed;
+        top: 50%;
+        left: 20px;
+        transform: translateY(-50%);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        transition: var(--transition-speed);
+      }
+
+      .nav-item {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(15, 12, 41, 0.7);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--light);
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all var(--transition-speed) ease;
+        position: relative;
+        border: 2px solid rgba(0, 201, 255, 0.3);
+        box-shadow: 0 0 15px rgba(0, 201, 255, 0.2);
+        overflow: hidden;
+        text-decoration: none;
+      }
+
+      .nav-item:hover {
+        width: 200px;
+        border-radius: 30px;
+        background: rgba(15, 12, 41, 0.9);
+        border-color: var(--accent);
+        box-shadow: 0 0 25px rgba(0, 255, 157, 0.4);
+      }
+
+      .nav-text {
+        position: absolute;
+        left: 75px;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateX(20px);
+        transition: all var(--transition-speed) ease;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+        width: 120px;
+        text-align: left;
+      }
+
+      .nav-item:hover .nav-text {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .nav-item i {
+        position: absolute;
+        left: 15px;
+        transition: left var(--transition-speed) ease;
+      }
+
+      .nav-item:hover i {
+        left: 20px;
+      }
+
+      .nav-item.active {
+        background: var(--primary);
+        transform: scale(1.1);
+      }
+
+      .nav-item.active .nav-text {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      /* Page Container */
+      .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 80px 40px 40px;
+        min-height: 100vh;
+      }
+
+      /* Header */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        background: rgba(15, 12, 41, 0.8);
+        backdrop-filter: blur(10px);
+        border-bottom: 2px solid var(--secondary);
+        position: sticky;
+        top: 0;
+        z-index: 900;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border-radius: 100px;
+      }
+
+      .logo img {
+        height: 80px;
+        width: auto;
+        transition: transform 0.5s ease;
+        border-radius: 100px;
+      }
+
+      .logo:hover img {
+        transform: rotate(15deg);
+      }
+
+      .logo-text {
+        font-family: "Orbitron", sans-serif;
+        font-size: 2.2rem;
+        background: linear-gradient(to right, var(--secondary), var(--accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+
+      /* Hero Section */
+      .hero {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 50vh;
+        text-align: center;
+        position: relative;
+        padding: 40px 20px;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at center,
+            rgba(74, 0, 224, 0.1) 0%,
+            transparent 70%
+          ),
+          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><rect fill="rgba(0,201,255,0.05)" width="100" height="100"/></svg>');
+        z-index: -1;
+      }
+
+      .hero h1 {
+        font-family: "Orbitron", sans-serif;
+        font-size: 4.5rem;
+        margin-bottom: 20px;
+        background: linear-gradient(to right, var(--light), var(--accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 20px rgba(0, 201, 255, 0.5);
+      }
+
+      .hero p {
+        font-size: 1.4rem;
+        max-width: 800px;
+        margin-bottom: 40px;
+        opacity: 0.9;
+      }
+
+      .cta-container {
+        display: flex;
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .cta-button {
+        padding: 15px 40px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        border: none;
+        cursor: pointer;
+      }
+
+      .primary-cta {
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        color: white;
+        box-shadow: 0 5px 25px rgba(74, 0, 224, 0.5);
+      }
+
+      .secondary-cta {
+        background: transparent;
+        color: var(--secondary);
+        border: 2px solid var(--secondary);
+      }
+
+      .cta-button:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 201, 255, 0.6);
+      }
+
+      .cta-button::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateX(-100%);
+        transition: transform 0.4s ease;
+      }
+
+      .cta-button:hover::after {
+        transform: translateX(0);
+      }
+
+      /* Roadmap Section */
+      .roadmap-container {
+        position: relative;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 60px 0;
+      }
+
+      .timeline {
+        position: relative;
+        margin: 0 auto;
+      }
+
+      .timeline::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 4px;
+        background: var(--secondary);
+        transform: translateX(-50%);
+        z-index: 1;
+      }
+
+      .progress-bar {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 4px;
+        height: 40%;
+        background: var(--accent);
+        transform: translateX(-50%);
+        z-index: 2;
+        transition: height 1.5s ease;
+      }
+
+      .filters {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 50px;
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        padding: 12px 25px;
+        background: rgba(25, 20, 60, 0.6);
+        border: 2px solid var(--secondary);
+        color: var(--light);
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+      }
+
+      .filter-btn:hover,
+      .filter-btn.active {
+        background: var(--primary);
+        border-color: var(--accent);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 201, 255, 0.3);
+      }
+
+      .checkpoint {
+        position: relative;
+        margin-bottom: 80px;
+        width: 45%;
+        padding: 30px;
+        background: rgba(25, 20, 60, 0.6);
+        border-radius: 20px;
+        border: 1px solid rgba(0, 201, 255, 0.3);
+        backdrop-filter: blur(10px);
+        transition: all 0.5s ease;
+        z-index: 3;
+        opacity: 1;
+        transform: translateY(0);
+        cursor: pointer;
+      }
+
+      .checkpoint:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 201, 255, 0.2);
+        border-color: var(--accent);
+      }
+
+      .checkpoint:nth-child(odd) {
+        left: 0;
+      }
+
+      .checkpoint:nth-child(even) {
+        left: 55%;
+      }
+
+      .checkpoint::after {
+        content: "";
+        position: absolute;
+        top: 30px;
+        width: 20px;
+        height: 20px;
+        background: var(--accent);
+        border-radius: 50%;
+        border: 3px solid var(--secondary);
+        z-index: 4;
+      }
+
+      .checkpoint:nth-child(odd)::after {
+        right: -45px;
+      }
+
+      .checkpoint:nth-child(even)::after {
+        left: -45px;
+      }
+
+      .checkpoint-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .checkpoint-date {
+        font-weight: 700;
+        color: var(--accent);
+        font-size: 1.1rem;
+      }
+
+      .status {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .status.completed {
+        background: rgba(0, 255, 157, 0.2);
+        color: var(--accent);
+      }
+
+      .status.in-progress {
+        background: rgba(0, 201, 255, 0.2);
+        color: var(--secondary);
+        animation: pulse 2s infinite;
+      }
+
+      .status.planned {
+        background: rgba(74, 0, 224, 0.2);
+        color: var(--primary);
+      }
+
+      .checkpoint h3 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+        color: var(--light);
+      }
+
+      .checkpoint .category {
+        display: inline-block;
+        padding: 5px 15px;
+        background: rgba(0, 201, 255, 0.1);
+        border-radius: 20px;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+      }
+
+      .checkpoint-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+      }
+
+      .checkpoint.active .checkpoint-content {
+        max-height: 500px;
+      }
+
+      .checkpoint-icon {
+        position: absolute;
+        top: -25px;
+        right: -25px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        color: var(--light);
+        border: 3px solid var(--dark);
+        box-shadow: 0 0 20px rgba(0, 201, 255, 0.4);
+      }
+
+      /* Stats Section */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        margin: 80px 0;
+      }
+
+      .stat-card {
+        text-align: center;
+        padding: 30px;
+        background: rgba(25, 20, 60, 0.6);
+        border-radius: 20px;
+        border: 1px solid rgba(0, 201, 255, 0.3);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-10px);
+        border-color: var(--accent);
+        box-shadow: 0 15px 30px rgba(0, 201, 255, 0.2);
+      }
+
+      .stat-number {
+        font-size: 3.5rem;
+        font-weight: 700;
+        background: linear-gradient(to bottom, var(--secondary), var(--accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-bottom: 10px;
+      }
+
+      /* Footer */
+      footer {
+        background: rgba(10, 8, 30, 0.9);
+        padding: 80px 0 30px;
+        border-top: 2px solid var(--secondary);
+        margin-top: 100px;
+      }
+
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 50px;
+        margin-bottom: 60px;
+      }
+
+      .footer-column h3 {
+        font-size: 1.6rem;
+        margin-bottom: 25px;
+        color: var(--accent);
+        position: relative;
+        padding-bottom: 15px;
+      }
+
+      .footer-column h3::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: var(--secondary);
+        border-radius: 2px;
+      }
+
+      .footer-column p {
+        margin-bottom: 25px;
+        color: rgba(240, 248, 255, 0.8);
+      }
+
+      .footer-column ul {
+        list-style: none;
+      }
+
+      .footer-column ul li {
+        margin-bottom: 15px;
+      }
+
+      .footer-column ul li a {
+        color: rgba(240, 248, 255, 0.8);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .footer-column ul li a:hover {
+        color: var(--accent);
+        transform: translateX(5px);
+      }
+
+      .social-icons {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+      }
+
+      .social-icons a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: rgba(0, 201, 255, 0.1);
+        color: var(--light);
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+      }
+
+      .social-icons a:hover {
+        background: var(--accent);
+        transform: translateY(-5px);
+        color: var(--dark);
+      }
+
+      .copyright {
+        text-align: center;
+        padding-top: 40px;
+        border-top: 1px solid rgba(0, 201, 255, 0.2);
+        color: rgba(240, 248, 255, 0.6);
+        font-size: 1rem;
+      }
+
+      /* Animations */
+      @keyframes float {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(0, 201, 255, 0.4);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(0, 201, 255, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(0, 201, 255, 0);
+        }
+      }
+
+      .floating {
+        animation: float 6s ease-in-out infinite;
+      }
+
+      .floating-2 {
+        animation: float 8s ease-in-out infinite;
+        animation-delay: 1s;
+      }
+
+      .floating-3 {
+        animation: float 7s ease-in-out infinite;
+        animation-delay: 2s;
+      }
+
+      /* Responsive */
+      @media (max-width: 992px) {
+        body {
+          padding-left: 0;
+        }
+
+        .vertical-nav {
+          display: none;
+        }
+
+        .hero h1 {
+          font-size: 3.5rem;
+        }
+
+        .timeline::before,
+        .progress-bar {
+          left: 30px;
+        }
+
+        .checkpoint {
+          width: auto;
+          margin-left: 60px;
+        }
+
+        .checkpoint:nth-child(even) {
+          left: 0;
+        }
+
+        .checkpoint:nth-child(odd)::after,
+        .checkpoint:nth-child(even)::after {
+          left: -45px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.8rem;
+        }
+
+        .hero p {
+          font-size: 1.2rem;
+        }
+
+        header {
+          padding: 15px 20px;
+        }
+
+        .logo-text {
+          font-size: 1.8rem;
+        }
+
+        .checkpoint {
+          padding: 20px;
+        }
+
+        .checkpoint h3 {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Vertical Navigation - Left Side -->
+    <div class="vertical-nav">
+      <a href="index.html" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span class="nav-text">Home</span>
+      </a>
+
+      <a href="about.html" class="nav-item">
+        <i class="fas fa-info-circle"></i>
+        <span class="nav-text">About</span>
+      </a>
+
+      <a href="game.html" class="nav-item">
+        <i class="fas fa-gamepad"></i>
+        <span class="nav-text">Our Game</span>
+      </a>
+
+      <a href="team.html" class="nav-item">
+        <i class="fas fa-users"></i>
+        <span class="nav-text">Our Team</span>
+      </a>
+
+      <a href="roadmap.html" class="nav-item active">
+        <i class="fas fa-map"></i>
+        <span class="nav-text">Roadmap</span>
+      </a>
+
+      <a href="blog.html" class="nav-item">
+        <i class="fas fa-blog"></i>
+        <span class="nav-text">Dev Blog</span>
+      </a>
+
+      <a href="contact.html" class="nav-item">
+        <i class="fas fa-envelope"></i>
+        <span class="nav-text">Contact</span>
+      </a>
+    </div>
+
+    <!-- Header -->
+    <header>
+      <div class="logo">
+        <img src="logo.png" alt="Beans Studio Logo" />
+        <div class="logo-text">BEANS STUDIO</div>
+      </div>
+      <div class="cta-container">
+        <a href="#" class="cta-button primary-cta">Pre-register Now</a>
+      </div>
+    </header>
+
+    <!-- Page Container -->
+    <div class="page-container">
+      <!-- Roadmap Page -->
+      <div id="roadmap" class="page active">
+        <section class="hero">
+          <h1>DEVELOPMENT ROADMAP</h1>
+          <p>
+            Follow our journey as we build Shields and Trebuchets from concept
+            to launch
+          </p>
+        </section>
+
+        <section class="roadmap-container">
+          <div class="timeline">
+            <div class="progress-bar" id="roadmap-progress"></div>
+
+            <div class="filters">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="completed">
+                Completed
+              </button>
+              <button class="filter-btn" data-filter="in-progress">
+                In Progress
+              </button>
+              <button class="filter-btn" data-filter="planned">Planned</button>
+              <button class="filter-btn" data-filter="gameplay">
+                Gameplay
+              </button>
+              <button class="filter-btn" data-filter="art">Art & Design</button>
+              <button class="filter-btn" data-filter="tech">Tech</button>
+            </div>
+
+            <!-- Roadmap Item Template - Copy this structure to add new milestones -->
+            <!--
+                    <div class="checkpoint" data-status="completed" data-category="tech">
+                        <div class="checkpoint-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="checkpoint-header">
+                            <div class="checkpoint-date">Q1 2024</div>
+                            <div class="status completed">Completed</div>
+                        </div>
+                        <h3>Core Engine Development</h3>
+                        <div class="category">Technology</div>
+                        <div class="checkpoint-content">
+                            <p>Built the foundational game engine with core mechanics including collision detection, physics, and rendering systems.</p>
+                            <ul>
+                                <li>Implemented Unity 2D framework</li>
+                                <li>Developed custom physics for trebuchets</li>
+                                <li>Created base class architecture for game entities</li>
+                            </ul>
+                        </div>
+                    </div>
+                    -->
+
+            <div
+              class="checkpoint"
+              data-status="completed"
+              data-category="gameplay"
+            >
+              <div class="checkpoint-icon">
+                <i class="fas fa-chess"></i>
+              </div>
+              <div class="checkpoint-header">
+                <div class="checkpoint-date">May 2025</div>
+                <div class="status completed">Completed</div>
+              </div>
+              <h3>Game Concept Finalized</h3>
+              <div class="category">Game Design</div>
+              <div class="checkpoint-content">
+                <p>
+                  Completed the core game design document establishing the
+                  unique blend of base defense, farming, and strategy.
+                </p>
+                <ul>
+                  <li>Defined core gameplay loop</li>
+                  <li>Created initial character concepts</li>
+                  <li>Developed resource economy system</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="checkpoint" data-status="completed" data-category="art">
+              <div class="checkpoint-icon">
+                <i class="fas fa-palette"></i>
+              </div>
+              <div class="checkpoint-header">
+                <div class="checkpoint-date">Apr 2024</div>
+                <div class="status in-progress">In Progress</div>
+              </div>
+              <h3>Art Style Defined</h3>
+              <div class="category">Art & Design</div>
+              <div class="checkpoint-content">
+                <p>
+                  Established the unique pixel art style with medieval fantasy
+                  influences that defines our game's visual identity.
+                </p>
+                <ul>
+                  <li>Created style guide and color palette</li>
+                  <li>Produced first character sprites</li>
+                  <li>Developed environment tile sets</li>
+                </ul>
+              </div>
+            </div>
+
+            <div
+              class="checkpoint"
+              data-status="in-progress"
+              data-category="tech"
+            >
+              <div class="checkpoint-icon">
+                <i class="fas fa-code"></i>
+              </div>
+              <div class="checkpoint-header">
+                <div class="checkpoint-date">Jun 2024</div>
+                <div class="status in-progress">In Progress</div>
+              </div>
+              <h3>Core Mechanics Implementation</h3>
+              <div class="category">Technology</div>
+              <div class="checkpoint-content">
+                <p>
+                  Developing the core game systems including castle building,
+                  resource management, and combat mechanics.
+                </p>
+                <ul>
+                  <li>Building system with upgrade paths</li>
+                  <li>Crop growth and harvesting cycle</li>
+                  <li>Troop training and combat AI</li>
+                  <li>Day/night cycle implementation</li>
+                </ul>
+              </div>
+            </div>
+
+            <div
+              class="checkpoint"
+              data-status="in-progress"
+              data-category="art"
+            >
+              <div class="checkpoint-icon">
+                <i class="fas fa-dragon"></i>
+              </div>
+              <div class="checkpoint-header">
+                <div class="checkpoint-date">Aug 2024</div>
+                <div class="status in-progress">In Progress</div>
+              </div>
+              <h3>Enemy Design & Animation</h3>
+              <div class="category">Art & Design</div>
+              <div class="checkpoint-content">
+                <p>
+                  Creating diverse enemy types with unique behaviors and
+                  animations to challenge players in different ways.
+                </p>
+                <ul>
+                  <li>Designing 10+ enemy archetypes</li>
+                  <li>Creating attack animations</li>
+                  <li>Developing special abilities</li>
+                  <li>Implementing enemy AI patterns</li>
+                </ul>
+              </div>
+            </div>
+
+            <div
+              class="checkpoint"
+              data-status="planned"
+              data-category="gameplay"
+            >
+              <div class="checkpoint-icon">
+                <i class="fas fa-campground"></i>
+              </div>
+              <div class="checkpoint-header">
+                <div class="checkpoint-date">Oct 2024</div>
+                <div class="status planned">Planned</div>
+              </div>
+              <h3>World Exploration System</h3>
+              <div class="category">Gameplay</div>
+              <div class="checkpoint-content">
+                <p>
+                  Implementing the exploration mechanics that allow players to
+                  discover new areas beyond their castle.
+                </p>
+                <ul>
+                  <li>Overworld map development</li>
+                  <li>Resource gathering locations</li>
+                  <li>Secret area discovery mechanics</li>
+                  <li>Environmental storytelling elements</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="checkpoint" data-status="planned" data-category="tech">
+              <div class="checkpoint-icon">
+                <i class="fas fa-cloud-sun-rain"></i>
+              </div>
+              <div class="checkpoint-header">
+                <div class="checkpoint-date">Dec 2024</div>
+                <div class="status planned">Planned</div>
+              </div>
+              <h3>Dynamic Weather System</h3>
+              <div class="category">Technology</div>
+              <div class="checkpoint-content">
+                <p>
+                  Adding weather effects that impact gameplay, including rain,
+                  snow, and storms that affect both farming and combat.
+                </p>
+                <ul>
+                  <li>Rain boosts crop growth</li>
+                  <li>Snow slows troop movement</li>
+                  <li>Storms reduce visibility for archers</li>
+                  <li>Seasonal effects on gameplay</li>
+                </ul>
+              </div>
+            </div>
+
+            <div
+              class="checkpoint"
+              data-status="planned"
+              data-category="gameplay"
+            >
+              <div class="checkpoint-icon">
+                <i class="fas fa-trophy"></i>
+              </div>
+              <div class="checkpoint-header">
+                <div class="checkpoint-date">Feb 2025</div>
+                <div class="status planned">Planned</div>
+              </div>
+              <h3>Beta Testing Phase</h3>
+              <div class="category">Gameplay</div>
+              <div class="checkpoint-content">
+                <p>
+                  Launching the closed beta to gather player feedback and make
+                  final adjustments before release.
+                </p>
+                <ul>
+                  <li>Select community members access</li>
+                  <li>Bug reporting system implementation</li>
+                  <li>Balance adjustments based on feedback</li>
+                  <li>Performance optimization</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="checkpoint" data-status="planned" data-category="tech">
+              <div class="checkpoint-icon">
+                <i class="fas fa-rocket"></i>
+              </div>
+              <div class="checkpoint-header">
+                <div class="checkpoint-date">Apr 2025</div>
+                <div class="status planned">Planned</div>
+              </div>
+              <h3>Official Game Launch</h3>
+              <div class="category">Technology</div>
+              <div class="checkpoint-content">
+                <p>
+                  Releasing the complete game on PC with all planned features
+                  and content.
+                </p>
+                <ul>
+                  <li>Full campaign with 3 chapters</li>
+                  <li>20+ enemy types</li>
+                  <li>15+ buildings to construct</li>
+                  <li>Endless survival mode</li>
+                  <li>Steam platform release</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="stats">
+          <div class="stat-card floating">
+            <div class="stat-number">13%</div>
+            <h3>Development Progress</h3>
+            <p>Towards our initial release</p>
+          </div>
+
+          <div class="stat-card floating-2">
+            <div class="stat-number">5</div>
+            <h3>Team Members</h3>
+            <p>Working on the project</p>
+          </div>
+
+          <div class="stat-card floating-3">
+            <div class="stat-number">1</div>
+            <h3>Milestones Reached</h3>
+            <p>On our development journey</p>
+          </div>
+
+          <div class="stat-card floating">
+            <div class="stat-number">200+</div>
+            <h3>Dev Hours</h3>
+            <p>Invested so far</p>
+          </div>
+        </section>
+
+        <section
+          class="hero"
+          style="
+            min-height: 40vh;
+            background: rgba(15, 12, 41, 0.5);
+            border-radius: 20px;
+          "
+        >
+          <h2>JOIN OUR DEVELOPMENT JOURNEY</h2>
+          <p>Sign up for exclusive updates and early access opportunities</p>
+          <div class="cta-container">
+            <a href="#" class="cta-button primary-cta"
+              >Subscribe to Newsletter</a
+            >
+            <a href="blog.html" class="cta-button secondary-cta"
+              >Read Development Blog</a
+            >
+          </div>
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <footer>
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>Beans Studio</h3>
+            <p>Creating pixel-perfect adventures with passion.</p>
+            <div class="social-icons">
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-discord"></i></a>
+              <a href="instagram.com/beansstudioofficial"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a
+                href="https://www.youtube.com/@BeansStudio-yt?sub_confirmation=1"
+                ><i class="fab fa-youtube"></i
+              ></a>
+            </div>
+          </div>
+          <div class="footer-column">
+            <h3>Quick Links</h3>
+            <ul>
+              <li>
+                <a href="index.html"><i class="fas fa-arrow-right"></i> Home</a>
+              </li>
+              <li>
+                <a href="about.html"
+                  ><i class="fas fa-arrow-right"></i> About Us</a
+                >
+              </li>
+              <li>
+                <a href="game.html"
+                  ><i class="fas fa-arrow-right"></i> Our Game</a
+                >
+              </li>
+              <li>
+                <a href="team.html"
+                  ><i class="fas fa-arrow-right"></i> Our Team</a
+                >
+              </li>
+              <li>
+                <a href="contact.html"
+                  ><i class="fas fa-arrow-right"></i> Contact</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Game Info</h3>
+            <ul>
+              <li>
+                <a href="features.html"
+                  ><i class="fas fa-arrow-right"></i> Features</a
+                >
+              </li>
+              <li>
+                <a href="blog.html"
+                  ><i class="fas fa-arrow-right"></i> Development Blog</a
+                >
+              </li>
+              <li>
+                <a href="roadmap.html"
+                  ><i class="fas fa-arrow-right"></i> Roadmap</a
+                >
+              </li>
+              <li>
+                <a href="faq.html"><i class="fas fa-arrow-right"></i> FAQ</a>
+              </li>
+              <li>
+                <a href="support.html"
+                  ><i class="fas fa-arrow-right"></i> Support</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Contact Us</h3>
+            <ul>
+              <li>
+                <a href="mailto:dportillobeckand@gmail.com"
+                  ><i class="fas fa-envelope"></i> dportillobeckand@gmail.com</a
+                >
+              </li>
+              <li>
+                <a href="#"><i class="fas fa-map-marker-alt"></i> Belgium</a>
+              </li>
+              <li>
+                <a href="tel:+32456101381"
+                  ><i class="fas fa-phone"></i> +32 456 101 381</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          &copy; 2025 Beans Studio. All rights reserved. Shields and Trebuchets
+          is a trademark of Beans Studio.
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      // Highlight active page in navigation
+      document.addEventListener("DOMContentLoaded", function () {
+        const currentPage = window.location.pathname.split("/").pop();
+        const navItems = document.querySelectorAll(".nav-item");
+
+        navItems.forEach((item) => {
+          const itemHref = item.getAttribute("href");
+          if (itemHref === currentPage) {
+            item.classList.add("active");
+          }
+        });
+
+        // Initialize roadmap progress animation
+        setTimeout(() => {
+          document.getElementById("roadmap-progress").style.height = "40%";
+        }, 500);
+
+        // Set up checkpoint expand/collapse
+        const checkpoints = document.querySelectorAll(".checkpoint");
+        checkpoints.forEach((checkpoint) => {
+          checkpoint.addEventListener("click", function () {
+            this.classList.toggle("active");
+          });
+        });
+
+        // Set up filtering
+        const filterButtons = document.querySelectorAll(".filter-btn");
+        filterButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            // Remove active class from all buttons
+            filterButtons.forEach((btn) => btn.classList.remove("active"));
+            // Add active class to clicked button
+            this.classList.add("active");
+
+            const filter = this.getAttribute("data-filter");
+            filterCheckpoints(filter);
+          });
+        });
+
+        // Function to filter checkpoints
+        function filterCheckpoints(filter) {
+          const checkpoints = document.querySelectorAll(".checkpoint");
+          checkpoints.forEach((checkpoint) => {
+            const status = checkpoint.getAttribute("data-status");
+            const category = checkpoint.getAttribute("data-category");
+
+            if (filter === "all" || filter === status || filter === category) {
+              checkpoint.style.display = "block";
+              setTimeout(() => {
+                checkpoint.style.opacity = "1";
+                checkpoint.style.transform = "translateY(0)";
+              }, 50);
+            } else {
+              checkpoint.style.opacity = "0";
+              checkpoint.style.transform = "translateY(20px)";
+              setTimeout(() => {
+                checkpoint.style.display = "none";
+              }, 500);
+            }
+          });
+        }
+      });
+
+      // Particle background effect
+      document.addEventListener("DOMContentLoaded", function () {
+        const container = document.body;
+        const particleCount = 30;
+
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement("div");
+          particle.style.position = "fixed";
+          particle.style.width = Math.random() * 5 + 2 + "px";
+          particle.style.height = particle.style.width;
+          particle.style.background =
+            i % 2 === 0 ? "rgba(0, 201, 255, 0.5)" : "rgba(0, 255, 157, 0.5)";
+          particle.style.borderRadius = "50%";
+          particle.style.top = Math.random() * 100 + "vh";
+          particle.style.left = Math.random() * 100 + "vw";
+          particle.style.zIndex = "-1";
+          particle.style.pointerEvents = "none";
+
+          container.appendChild(particle);
+
+          // Animate particles
+          animateParticle(particle);
+        }
+
+        function animateParticle(element) {
+          const startX = parseInt(element.style.left);
+          const startY = parseInt(element.style.top);
+          const amplitude = 30 + Math.random() * 70;
+          const duration = 3000 + Math.random() * 5000;
+
+          let startTime = null;
+
+          function moveParticle(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const progress = timestamp - startTime;
+
+            // Move in a circular pattern
+            const x =
+              startX +
+              Math.sin((progress / duration) * Math.PI * 2) * amplitude;
+            const y =
+              startY +
+              Math.cos((progress / duration) * Math.PI * 2) * amplitude;
+
+            element.style.left = x + "px";
+            element.style.top = y + "px";
+
+            requestAnimationFrame(moveParticle);
+          }
+
+          requestAnimationFrame(moveParticle);
+        }
+      });
+    </script>
+  </body>
+</html>
