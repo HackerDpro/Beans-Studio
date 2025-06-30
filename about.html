@@ -1,1043 +1,1299 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About Beans Studio | Shields and Trebuchets</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Exo+2:wght@300;400;600;700&family=Press+Start+2P&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <style>
-      :root {
-        --primary: #4a00e0;
-        --secondary: #00c9ff;
-        --accent: #00ff9d;
-        --dark: #0f0c29;
-        --light: #f0f8ff;
-        --pixel-size: 2px;
-        --transition-speed: 0.3s;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Beans Studio | Shields and Trebuchets</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Exo+2:wght@300;400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <style>
+    :root {
+      --primary: #4a00e0;
+      --secondary: #00c9ff;
+      --accent: #00ff9d;
+      --dark: #0f0c29;
+      --light: #f0f8ff;
+      --pixel-size: 2px;
+      --transition-speed: 0.3s;
+    }
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    body {
+      font-family: "Exo 2", sans-serif;
+      background: linear-gradient(135deg, var(--dark) 0%, #1a1a2e 100%);
+      color: var(--light);
+      overflow-x: hidden;
+      line-height: 1.7;
+      min-height: 100vh;
+      position: relative;
+      padding-left: 80px;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(
+          circle at 10% 20%,
+          rgba(74, 0, 224, 0.1) 0%,
+          transparent 20%
+        ),
+        radial-gradient(
+          circle at 90% 80%,
+          rgba(0, 201, 255, 0.1) 0%,
+          transparent 20%
+        );
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Vertical Navigation */
+    .vertical-nav {
+      position: fixed;
+      top: 50%;
+      left: 20px;
+      transform: translateY(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      transition: var(--transition-speed);
+    }
+
+    .nav-item {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(15, 12, 41, 0.7);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--light);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+      position: relative;
+      border: 2px solid rgba(0, 201, 255, 0.3);
+      box-shadow: 0 0 15px rgba(0, 201, 255, 0.2);
+      overflow: hidden;
+      text-decoration: none;
+    }
+
+    .nav-item:hover {
+      width: 200px;
+      border-radius: 30px;
+      background: rgba(15, 12, 41, 0.9);
+      border-color: var(--accent);
+      box-shadow: 0 0 25px rgba(0, 255, 157, 0.4);
+    }
+
+    .nav-text {
+      position: absolute;
+      left: 75px;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateX(20px);
+      transition: all var(--transition-speed) ease;
+      font-weight: 600;
+      font-size: 1.1rem;
+      text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+      width: 120px;
+      text-align: left;
+    }
+
+    .nav-item:hover .nav-text {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .nav-item i {
+      position: absolute;
+      left: 15px;
+      transition: left var(--transition-speed) ease;
+    }
+
+    .nav-item:hover i {
+      left: 20px;
+    }
+
+    .nav-item.active {
+      background: var(--primary);
+      transform: scale(1.1);
+    }
+
+    .nav-item.active .nav-text {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Page Container */
+    .page-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 40px 40px;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background: rgba(15, 12, 41, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--secondary);
+      position: sticky;
+      top: 0;
+      z-index: 900;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-radius: 100px;
+      cursor: pointer;
+    }
+
+    .logo img {
+      height: 80px;
+      width: auto;
+      transition: transform 0.5s ease;
+      border-radius: 100px;
+    }
+
+    .logo:hover img {
+      transform: rotate(15deg);
+    }
+
+    .logo-text {
+      font-family: "Orbitron", sans-serif;
+      font-size: 2.2rem;
+      background: linear-gradient(to right, var(--secondary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    /* Hero Section */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 60vh;
+      text-align: center;
+      position: relative;
+      padding: 40px 20px;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(
+          circle at center,
+          rgba(74, 0, 224, 0.1) 0%,
+          transparent 70%
+        ),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><rect fill="rgba(0,201,255,0.05)" width="100" height="100"/></svg>');
+      z-index: -1;
+    }
+
+    .hero h1 {
+      font-family: "Orbitron", sans-serif;
+      font-size: 4.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(to right, var(--light), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 20px rgba(0, 201, 255, 0.5);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .hero p {
+      font-size: 1.4rem;
+      max-width: 800px;
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+
+    /* About Content */
+    .about-content {
+      padding: 100px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      font-family: "Orbitron", sans-serif;
+      font-size: 2.8rem;
+      margin-bottom: 80px;
+      color: var(--accent);
+      position: relative;
+    }
+
+    .section-title::after {
+      content: "";
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: var(--secondary);
+      border-radius: 2px;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+      margin-bottom: 80px;
+    }
+
+    .about-card {
+      background: rgba(25, 20, 60, 0.6);
+      border-radius: 20px;
+      padding: 40px 30px;
+      text-align: center;
+      transition: all 0.4s ease;
+      border: 1px solid rgba(0, 201, 255, 0.2);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-card:hover {
+      transform: translateY(-15px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      border-color: var(--accent);
+    }
+
+    .about-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .about-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .about-icon {
+      font-size: 3.5rem;
+      margin-bottom: 25px;
+      background: linear-gradient(to bottom, var(--secondary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .about-card h3 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: var(--light);
+    }
+
+    .about-card p {
+      color: rgba(240, 248, 255, 0.8);
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto 100px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 4px;
+      background: var(--secondary);
+      transform: translateX(-50%);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 50px;
+      width: 45%;
+      padding: 20px;
+      background: rgba(25, 20, 60, 0.6);
+      border-radius: 15px;
+      border: 1px solid rgba(0, 201, 255, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .timeline-item:nth-child(odd) {
+      left: 0;
+    }
+
+    .timeline-item:nth-child(even) {
+      left: 55%;
+    }
+
+    .timeline-item::after {
+      content: "";
+      position: absolute;
+      top: 30px;
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 50%;
+      border: 3px solid var(--secondary);
+    }
+
+    .timeline-item:nth-child(odd)::after {
+      right: -45px;
+    }
+
+    .timeline-item:nth-child(even)::after {
+      left: -45px;
+    }
+
+    .timeline-date {
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    /* Stats Section */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      margin: 80px 0;
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: 30px;
+      background: rgba(25, 20, 60, 0.6);
+      border-radius: 20px;
+      border: 1px solid rgba(0, 201, 255, 0.3);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-10px);
+      border-color: var(--accent);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-number {
+      font-size: 3.5rem;
+      font-weight: 700;
+      background: linear-gradient(to bottom, var(--secondary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 10px;
+    }
+
+    /* Newsletter Section */
+    .newsletter {
+      padding: 100px 0;
+      text-align: center;
+      background: rgba(15, 12, 41, 0.5);
+      border-radius: 30px;
+      margin: 50px 0;
+      border: 1px solid rgba(0, 201, 255, 0.2);
+    }
+
+    .newsletter h2 {
+      font-family: "Orbitron", sans-serif;
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      color: var(--accent);
+    }
+
+    .newsletter p {
+      max-width: 600px;
+      margin: 0 auto 40px;
+      font-size: 1.2rem;
+    }
+
+    .newsletter-form {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      gap: 15px;
+    }
+
+    .newsletter-form input {
+      flex: 1;
+      padding: 18px 25px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--light);
+      border: 1px solid rgba(0, 201, 255, 0.3);
+    }
+
+    .newsletter-form input:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .newsletter-form button {
+      padding: 18px 40px;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+    }
+
+    .newsletter-form button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 201, 255, 0.4);
+    }
+
+    .subscribed-message {
+      display: none;
+      text-align: center;
+      color: var(--accent);
+      margin-top: 20px;
+      font-weight: 600;
+    }
+
+    .loader {
+      border: 4px solid rgba(0, 201, 255, 0.3);
+      border-top: 4px solid var(--accent);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+      display: none;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      text-align: center;
+      padding: 80px 0;
+      background: rgba(15, 12, 41, 0.5);
+      border-radius: 30px;
+      margin: 50px 0;
+      border: 1px solid rgba(0, 201, 255, 0.2);
+    }
+
+    .cta-section h2 {
+      font-family: "Orbitron", sans-serif;
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      color: var(--accent);
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .cta-button {
+      padding: 15px 40px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      border: none;
+      cursor: pointer;
+    }
+
+    .primary-cta {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 5px 25px rgba(74, 0, 224, 0.5);
+    }
+
+    .secondary-cta {
+      background: transparent;
+      color: var(--secondary);
+      border: 2px solid var(--secondary);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 201, 255, 0.6);
+    }
+
+    .cta-button::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(-100%);
+      transition: transform 0.4s ease;
+    }
+
+    .cta-button:hover::after {
+      transform: translateX(0);
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(10, 8, 30, 0.9);
+      padding: 80px 0 30px;
+      border-top: 2px solid var(--secondary);
+      margin-top: 100px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 50px;
+      margin-bottom: 60px;
+    }
+
+    .footer-column h3 {
+      font-size: 1.6rem;
+      margin-bottom: 25px;
+      color: var(--accent);
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    .footer-column h3::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 3px;
+      background: var(--secondary);
+      border-radius: 2px;
+    }
+
+    .footer-column p {
+      margin-bottom: 25px;
+      color: rgba(240, 248, 255, 0.8);
+    }
+
+    .footer-column ul {
+      list-style: none;
+    }
+
+    .footer-column ul li {
+      margin-bottom: 15px;
+    }
+
+    .footer-column ul li a {
+      color: rgba(240, 248, 255, 0.8);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-column ul li a:hover {
+      color: var(--accent);
+      transform: translateX(5px);
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .social-icons a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: rgba(0, 201, 255, 0.1);
+      color: var(--light);
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-icons a:hover {
+      background: var(--accent);
+      transform: translateY(-5px);
+      color: var(--dark);
+    }
+
+    .copyright {
+      text-align: center;
+      padding-top: 40px;
+      border-top: 1px solid rgba(0, 201, 255, 0.2);
+      color: rgba(240, 248, 255, 0.6);
+      font-size: 1rem;
+    }
+
+    /* Animations */
+    @keyframes float {
+      0% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .floating-2 {
+      animation: float 8s ease-in-out infinite;
+      animation-delay: 1s;
+    }
+
+    .floating-3 {
+      animation: float 7s ease-in-out infinite;
+      animation-delay: 2s;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Toast notifications */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 15px 25px;
+      border-radius: 10px;
+      background: rgba(25, 20, 60, 0.95);
+      border: 1px solid var(--accent);
+      color: white;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s ease;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success {
+      border-color: var(--accent);
+    }
+
+    .toast.error {
+      border-color: #ff4d4d;
+    }
+
+    .toast i {
+      font-size: 1.5rem;
+    }
+
+    .toast.success i {
+      color: var(--accent);
+    }
+
+    .toast.error i {
+      color: #ff4d4d;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
       body {
-        font-family: "Exo 2", sans-serif;
-        background: linear-gradient(135deg, var(--dark) 0%, #1a1a2e 100%);
-        color: var(--light);
-        overflow-x: hidden;
-        line-height: 1.7;
-        min-height: 100vh;
-        position: relative;
-        padding-left: 80px; /* Space for vertical nav */
+        padding-left: 0;
       }
 
-      body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(
-            circle at 10% 20%,
-            rgba(74, 0, 224, 0.1) 0%,
-            transparent 20%
-          ),
-          radial-gradient(
-            circle at 90% 80%,
-            rgba(0, 201, 255, 0.1) 0%,
-            transparent 20%
-          );
-        z-index: -1;
-        pointer-events: none;
-      }
-
-      /* Fixed Navigation Bar */
       .vertical-nav {
-        position: fixed;
-        top: 50%;
-        left: 20px;
-        transform: translateY(-50%);
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        transition: var(--transition-speed);
-      }
-
-      .nav-item {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background: rgba(15, 12, 41, 0.7);
-        backdrop-filter: blur(10px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--light);
-        font-size: 1.5rem;
-        cursor: pointer;
-        transition: all var(--transition-speed) ease;
-        position: relative;
-        border: 2px solid rgba(0, 201, 255, 0.3);
-        box-shadow: 0 0 15px rgba(0, 201, 255, 0.2);
-        overflow: hidden;
-        text-decoration: none; /* Remove underline from links */
-      }
-
-      .nav-item:hover {
-        width: 200px;
-        border-radius: 30px;
-        background: rgba(15, 12, 41, 0.9);
-        border-color: var(--accent);
-        box-shadow: 0 0 25px rgba(0, 255, 157, 0.4);
-      }
-
-      .nav-text {
-        position: absolute;
-        left: 75px; /* Increased spacing for better alignment */
-        white-space: nowrap;
-        opacity: 0;
-        transform: translateX(20px);
-        transition: all var(--transition-speed) ease;
-        font-weight: 600;
-        font-size: 1.1rem;
-        text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-        pointer-events: none;
-        width: 120px;
-        text-align: left;
-      }
-
-      .nav-item:hover .nav-text {
-        opacity: 1;
-        transform: translateX(0);
-      }
-
-      /* Keep the icon fixed in position */
-      .nav-item i {
-        position: absolute;
-        left: 15px; /* Position icon on the left side */
-        transition: left var(--transition-speed) ease;
-      }
-
-      .nav-item:hover i {
-        left: 20px; /* Keep icon at same position on hover */
-      }
-
-      .nav-item.active {
-        background: var(--primary);
-        transform: scale(1.1);
-      }
-
-      .nav-item.active .nav-text {
-        opacity: 1;
-        transform: translateX(0);
-      }
-
-      /* Page Container */
-      .page-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 80px 40px 40px;
-        min-height: 100vh;
-      }
-
-      /* Header */
-      header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 40px;
-        background: rgba(15, 12, 41, 0.8);
-        backdrop-filter: blur(10px);
-        border-bottom: 2px solid var(--secondary);
-        position: sticky;
-        top: 0;
-        z-index: 900;
-      }
-
-      .logo {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        border-radius: 100px;
-      }
-
-      .logo img {
-        height: 80px;
-        width: auto;
-        transition: transform 0.5s ease;
-        border-radius: 100px;
-      }
-
-      .logo:hover img {
-        transform: rotate(15deg);
-      }
-
-      .logo-text {
-        font-family: "Orbitron", sans-serif;
-        font-size: 2.2rem;
-        background: linear-gradient(to right, var(--secondary), var(--accent));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        font-weight: 700;
-        letter-spacing: 2px;
-      }
-
-      /* Hero Section */
-      .hero {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        min-height: 60vh;
-        text-align: center;
-        position: relative;
-        padding: 40px 20px;
-        overflow: hidden;
-      }
-
-      .hero::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(
-            circle at center,
-            rgba(74, 0, 224, 0.1) 0%,
-            transparent 70%
-          ),
-          url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><rect fill="rgba(0,201,255,0.05)" width="100" height="100"/></svg>');
-        z-index: -1;
+        display: none;
       }
 
       .hero h1 {
-        font-family: "Orbitron", sans-serif;
-        font-size: 4.5rem;
-        margin-bottom: 20px;
-        background: linear-gradient(to right, var(--light), var(--accent));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        text-shadow: 0 0 20px rgba(0, 201, 255, 0.5);
-      }
-
-      .hero p {
-        font-size: 1.4rem;
-        max-width: 800px;
-        margin-bottom: 40px;
-        opacity: 0.9;
-      }
-
-      /* About Content */
-      .about-content {
-        padding: 100px 0;
-      }
-
-      .section-title {
-        text-align: center;
-        font-family: "Orbitron", sans-serif;
-        font-size: 2.8rem;
-        margin-bottom: 80px;
-        color: var(--accent);
-        position: relative;
-      }
-
-      .section-title::after {
-        content: "";
-        position: absolute;
-        bottom: -20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100px;
-        height: 4px;
-        background: var(--secondary);
-        border-radius: 2px;
-      }
-
-      .about-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 40px;
-        margin-bottom: 80px;
-      }
-
-      .about-card {
-        background: rgba(25, 20, 60, 0.6);
-        border-radius: 20px;
-        padding: 40px 30px;
-        text-align: center;
-        transition: all 0.4s ease;
-        border: 1px solid rgba(0, 201, 255, 0.2);
-        backdrop-filter: blur(10px);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .about-card:hover {
-        transform: translateY(-15px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        border-color: var(--accent);
-      }
-
-      .about-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 5px;
-        background: linear-gradient(90deg, var(--primary), var(--accent));
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.4s ease;
-      }
-
-      .about-card:hover::before {
-        transform: scaleX(1);
-      }
-
-      .about-icon {
         font-size: 3.5rem;
-        margin-bottom: 25px;
-        background: linear-gradient(to bottom, var(--secondary), var(--accent));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
       }
 
-      .about-card h3 {
-        font-size: 1.8rem;
-        margin-bottom: 20px;
-        color: var(--light);
-      }
-
-      .about-card p {
-        color: rgba(240, 248, 255, 0.8);
-      }
-
-      /* Timeline */
-      .timeline {
-        position: relative;
-        max-width: 900px;
-        margin: 0 auto 100px;
+      .cta-buttons {
+        flex-direction: column;
+        align-items: center;
       }
 
       .timeline::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 50%;
-        width: 4px;
-        background: var(--secondary);
-        transform: translateX(-50%);
+        left: 30px;
       }
 
       .timeline-item {
-        position: relative;
-        margin-bottom: 50px;
-        width: 45%;
-        padding: 20px;
-        background: rgba(25, 20, 60, 0.6);
-        border-radius: 15px;
-        border: 1px solid rgba(0, 201, 255, 0.3);
-        backdrop-filter: blur(10px);
-      }
-
-      .timeline-item:nth-child(odd) {
-        left: 0;
+        width: auto;
+        margin-left: 60px;
       }
 
       .timeline-item:nth-child(even) {
-        left: 55%;
+        left: 0;
       }
 
-      .timeline-item::after {
-        content: "";
-        position: absolute;
-        top: 30px;
-        width: 20px;
-        height: 20px;
-        background: var(--accent);
-        border-radius: 50%;
-        border: 3px solid var(--secondary);
-      }
-
-      .timeline-item:nth-child(odd)::after {
-        right: -45px;
-      }
-
+      .timeline-item:nth-child(odd)::after,
       .timeline-item:nth-child(even)::after {
         left: -45px;
       }
 
-      .timeline-date {
-        font-weight: 700;
-        color: var(--accent);
-        margin-bottom: 10px;
+      .newsletter-form {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.8rem;
       }
 
-      /* Stats Section */
-      .stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 30px;
-        margin: 80px 0;
+      .section-title {
+        font-size: 2.2rem;
       }
 
-      .stat-card {
-        text-align: center;
-        padding: 30px;
-        background: rgba(25, 20, 60, 0.6);
-        border-radius: 20px;
-        border: 1px solid rgba(0, 201, 255, 0.3);
-        backdrop-filter: blur(10px);
-        transition: all 0.3s ease;
+      header {
+        padding: 15px 20px;
       }
 
-      .stat-card:hover {
-        transform: translateY(-10px);
-        border-color: var(--accent);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      .logo-text {
+        font-size: 1.8rem;
       }
+    }
+  </style>
+</head>
+<body>
+  <!-- Vertical Navigation -->
+  <div class="vertical-nav">
+    <a href="index.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span class="nav-text">Home</span>
+    </a>
+    <a href="about.html" class="nav-item active">
+      <i class="fas fa-info-circle"></i>
+      <span class="nav-text">About</span>
+    </a>
+    <a href="game.html" class="nav-item">
+      <i class="fas fa-gamepad"></i>
+      <span class="nav-text">Our Game</span>
+    </a>
+    <a href="team.html" class="nav-item">
+      <i class="fas fa-users"></i>
+      <span class="nav-text">Our Team</span>
+    </a>
+    <a href="roadmap.html" class="nav-item">
+      <i class="fas fa-map"></i>
+      <span class="nav-text">Roadmap</span>
+    </a>
+    <a href="blog.html" class="nav-item">
+      <i class="fas fa-blog"></i>
+      <span class="nav-text">Dev Blog</span>
+    </a>
+    <a href="contact.html" class="nav-item">
+      <i class="fas fa-envelope"></i>
+      <span class="nav-text">Contact</span>
+    </a>
+  </div>
 
-      .stat-number {
-        font-size: 3.5rem;
-        font-weight: 700;
-        background: linear-gradient(to bottom, var(--secondary), var(--accent));
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        margin-bottom: 10px;
-      }
-
-      /* CTA Section */
-      .cta-section {
-        text-align: center;
-        padding: 80px 0;
-        background: rgba(15, 12, 41, 0.5);
-        border-radius: 30px;
-        margin: 50px 0;
-        border: 1px solid rgba(0, 201, 255, 0.2);
-      }
-
-      .cta-section h2 {
-        font-family: "Orbitron", sans-serif;
-        font-size: 2.5rem;
-        margin-bottom: 30px;
-        color: var(--accent);
-      }
-
-      .cta-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        margin-top: 30px;
-        flex-wrap: wrap;
-      }
-
-      .cta-button {
-        padding: 15px 40px;
-        font-size: 1.2rem;
-        font-weight: 700;
-        border-radius: 50px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        border: none;
-        cursor: pointer;
-      }
-
-      .primary-cta {
-        background: linear-gradient(45deg, var(--primary), var(--secondary));
-        color: white;
-        box-shadow: 0 5px 25px rgba(74, 0, 224, 0.5);
-      }
-
-      .secondary-cta {
-        background: transparent;
-        color: var(--secondary);
-        border: 2px solid var(--secondary);
-      }
-
-      .cta-button:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0, 201, 255, 0.6);
-      }
-
-      .cta-button::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.2);
-        transform: translateX(-100%);
-        transition: transform 0.4s ease;
-      }
-
-      .cta-button:hover::after {
-        transform: translateX(0);
-      }
-
-      /* Footer */
-      footer {
-        background: rgba(10, 8, 30, 0.9);
-        padding: 80px 0 30px;
-        border-top: 2px solid var(--secondary);
-        margin-top: 100px;
-      }
-
-      .footer-content {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 50px;
-        margin-bottom: 60px;
-      }
-
-      .footer-column h3 {
-        font-size: 1.6rem;
-        margin-bottom: 25px;
-        color: var(--accent);
-        position: relative;
-        padding-bottom: 15px;
-      }
-
-      .footer-column h3::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 50px;
-        height: 3px;
-        background: var(--secondary);
-        border-radius: 2px;
-      }
-
-      .footer-column p {
-        margin-bottom: 25px;
-        color: rgba(240, 248, 255, 0.8);
-      }
-
-      .footer-column ul {
-        list-style: none;
-      }
-
-      .footer-column ul li {
-        margin-bottom: 15px;
-      }
-
-      .footer-column ul li a {
-        color: rgba(240, 248, 255, 0.8);
-        text-decoration: none;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .footer-column ul li a:hover {
-        color: var(--accent);
-        transform: translateX(5px);
-      }
-
-      .social-icons {
-        display: flex;
-        gap: 15px;
-        margin-top: 25px;
-      }
-
-      .social-icons a {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        background: rgba(0, 201, 255, 0.1);
-        color: var(--light);
-        font-size: 1.2rem;
-        transition: all 0.3s ease;
-      }
-
-      .social-icons a:hover {
-        background: var(--accent);
-        transform: translateY(-5px);
-        color: var(--dark);
-      }
-
-      .copyright {
-        text-align: center;
-        padding-top: 40px;
-        border-top: 1px solid rgba(0, 201, 255, 0.2);
-        color: rgba(240, 248, 255, 0.6);
-        font-size: 1rem;
-      }
-
-      /* Animations */
-      @keyframes float {
-        0% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-15px);
-        }
-        100% {
-          transform: translateY(0);
-        }
-      }
-
-      .floating {
-        animation: float 6s ease-in-out infinite;
-      }
-
-      .floating-2 {
-        animation: float 8s ease-in-out infinite;
-        animation-delay: 1s;
-      }
-
-      .floating-3 {
-        animation: float 7s ease-in-out infinite;
-        animation-delay: 2s;
-      }
-
-      /* Responsive */
-      @media (max-width: 992px) {
-        body {
-          padding-left: 0;
-        }
-
-        .vertical-nav {
-          display: none;
-        }
-
-        .hero h1 {
-          font-size: 3.5rem;
-        }
-
-        .cta-buttons {
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .timeline::before {
-          left: 30px;
-        }
-
-        .timeline-item {
-          width: auto;
-          margin-left: 60px;
-        }
-
-        .timeline-item:nth-child(even) {
-          left: 0;
-        }
-
-        .timeline-item:nth-child(odd)::after,
-        .timeline-item:nth-child(even)::after {
-          left: -45px;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .hero h1 {
-          font-size: 2.8rem;
-        }
-
-        .section-title {
-          font-size: 2.2rem;
-        }
-
-        header {
-          padding: 15px 20px;
-        }
-
-        .logo-text {
-          font-size: 1.8rem;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Vertical Navigation - Left Side (Updated to match index.html) -->
-    <div class="vertical-nav">
-      <!-- Converted to anchor tags with proper href attributes -->
-      <a href="index.html" class="nav-item">
-        <i class="fas fa-home"></i>
-        <span class="nav-text">Home</span>
-      </a>
-
-      <a href="about.html" class="nav-item active">
-        <i class="fas fa-info-circle"></i>
-        <span class="nav-text">About</span>
-      </a>
-
-      <a href="game.html" class="nav-item">
-        <i class="fas fa-gamepad"></i>
-        <span class="nav-text">Our Game</span>
-      </a>
-
-      <a href="team.html" class="nav-item">
-        <i class="fas fa-users"></i>
-        <span class="nav-text">Our Team</span>
-      </a>
-
-      <a href="roadmap.html" class="nav-item">
-        <i class="fas fa-map"></i>
-        <span class="nav-text">Roadmap</span>
-      </a>
-
-      <a href="blog.html" class="nav-item">
-        <i class="fas fa-blog"></i>
-        <span class="nav-text">Dev Blog</span>
-      </a>
-
-      <a href="contact.html" class="nav-item">
-        <i class="fas fa-envelope"></i>
-        <span class="nav-text">Contact</span>
-      </a>
+  <!-- Header -->
+  <header>
+    <div class="logo" id="home-link">
+      <img src="logo.png" alt="Beans Studio Logo" />
+      <div class="logo-text">BEANS STUDIO</div>
     </div>
+  </header>
 
-    <!-- Header -->
-    <header>
-      <div class="logo">
-        <img src="logo.png" alt="Beans Studio Logo" />
-        <div class="logo-text">BEANS STUDIO</div>
-      </div>
-      <div class="cta-buttons">
-        <a href="#" class="cta-button primary-cta">Pre-register Now</a>
-      </div>
-    </header>
+  <!-- Page Container -->
+  <div class="page-container">
+    <!-- About Page -->
+    <div id="about" class="page active">
+      <section class="hero">
+        <h1 class="floating">ABOUT BEANS STUDIO</h1>
+        <p>
+          Where passion meets pixels - crafting immersive gaming experiences
+          since 2023
+        </p>
+      </section>
 
-    <!-- Page Container -->
-    <div class="page-container">
-      <!-- About Page -->
-      <div id="about" class="page active">
-        <section class="hero">
-          <h1>ABOUT BEANS STUDIO</h1>
-          <p>
-            Where passion meets pixels - crafting immersive gaming experiences
-            since 2023
-          </p>
-        </section>
-
-        <section class="about-content">
-          <div class="about-grid">
-            <div class="about-card floating">
-              <div class="about-icon">
-                <i class="fas fa-rocket"></i>
-              </div>
-              <h3>Our Mission</h3>
-              <p>
-                To create captivating pixel-art games that blend strategy,
-                storytelling, and innovation, providing players with
-                unforgettable experiences that challenge and delight.
-              </p>
+      <section class="about-content">
+        <div class="about-grid">
+          <div class="about-card floating">
+            <div class="about-icon">
+              <i class="fas fa-rocket"></i>
             </div>
-
-            <div class="about-card floating-2">
-              <div class="about-icon">
-                <i class="fas fa-eye"></i>
-              </div>
-              <h3>Our Vision</h3>
-              <p>
-                To become a leading indie game studio known for our unique art
-                style, innovative gameplay mechanics, and commitment to player
-                satisfaction.
-              </p>
-            </div>
-
-            <div class="about-card floating-3">
-              <div class="about-icon">
-                <i class="fas fa-heart"></i>
-              </div>
-              <h3>Our Values</h3>
-              <p>
-                Creativity, Innovation, Player-Centric Design, Quality, and
-                Passion are the core values that drive every game we create.
-              </p>
-            </div>
+            <h3>Our Mission</h3>
+            <p>
+              To create captivating pixel-art games that blend strategy,
+              storytelling, and innovation, providing players with
+              unforgettable experiences that challenge and delight.
+            </p>
           </div>
 
-          <h2 class="section-title">OUR STORY</h2>
-          <div class="timeline">
-            <div class="timeline-item">
-              <div class="timeline-date">February 2023</div>
-              <h3>The Beginning</h3>
-              <p>
-                Beans Studio was founded by a group of friends united by their
-                love for pixel-art games and strategic gameplay. What started as
-                late-night gaming discussions evolved into a shared dream.
-              </p>
+          <div class="about-card floating-2">
+            <div class="about-icon">
+              <i class="fas fa-eye"></i>
             </div>
-
-            <div class="timeline-item">
-              <div class="timeline-date">May 2023</div>
-              <h3>Concept Development</h3>
-              <p>
-                Our team began developing the concept for "Shields and
-                Trebuchets" - a unique blend of base defense, farming, and
-                strategy set in a charming pixel-art world.
-              </p>
-            </div>
-
-            <div class="timeline-item">
-              <div class="timeline-date">August 2023</div>
-              <h3>First Prototype</h3>
-              <p>
-                After months of design work, we created our first playable
-                prototype. This milestone validated our core gameplay mechanics
-                and artistic direction.
-              </p>
-            </div>
-
-            <div class="timeline-item">
-              <div class="timeline-date">December 2023</div>
-              <h3>Studio Expansion</h3>
-              <p>
-                We expanded our team with talented artists and programmers to
-                accelerate development and bring our vision to life with higher
-                quality.
-              </p>
-            </div>
-
-            <div class="timeline-item">
-              <div class="timeline-date">Present</div>
-              <h3>Full Development</h3>
-              <p>
-                Currently in active development, "Shields and Trebuchets" is
-                shaping up to be everything we dreamed of and more. We're
-                polishing gameplay and adding exciting features.
-              </p>
-            </div>
+            <h3>Our Vision</h3>
+            <p>
+              To become a leading indie game studio known for our unique art
+              style, innovative gameplay mechanics, and commitment to player
+              satisfaction.
+            </p>
           </div>
 
-          <h2 class="section-title">BY THE NUMBERS</h2>
-          <div class="stats">
-            <div class="stat-card floating">
-              <div class="stat-number">5</div>
-              <h3>Team Members</h3>
-              <p>Passionate creators</p>
+          <div class="about-card floating-3">
+            <div class="about-icon">
+              <i class="fas fa-heart"></i>
             </div>
-
-            <div class="stat-card floating-2">
-              <div class="stat-number">10K+</div>
-              <h3>Lines of Code</h3>
-              <p>And counting</p>
-            </div>
-
-            <div class="stat-card floating-3">
-              <div class="stat-number">500+</div>
-              <h3>Art Assets</h3>
-              <p>Sprites, animations, and tiles</p>
-            </div>
-
-            <div class="stat-card floating">
-              <div class="stat-number">1</div>
-              <h3>Amazing Game</h3>
-              <p>In development</p>
-            </div>
-          </div>
-        </section>
-
-        <section class="cta-section">
-          <h2>JOIN OUR JOURNEY</h2>
-          <p>
-            Become part of the Beans Studio community and help shape the future
-            of our games
-          </p>
-          <div class="cta-buttons">
-            <a href="#" class="cta-button primary-cta">Join Discord</a>
-            <a href="#" class="cta-button secondary-cta">Follow on Instagram</a>
-            <a href="#" class="cta-button secondary-cta"
-              >Subscribe on YouTube</a
-            >
-          </div>
-        </section>
-      </div>
-
-      <!-- Footer -->
-      <footer>
-        <div class="footer-content">
-          <div class="footer-column">
-            <h3>Beans Studio</h3>
-            <p>Creating pixel-perfect adventures with passion.</p>
-            <div class="social-icons">
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-discord"></i></a>
-              <a href="instagram.com/beansstudioofficial"
-                ><i class="fab fa-instagram"></i
-              ></a>
-              <a
-                href="https://www.youtube.com/@BeansStudio-yt?sub_confirmation=1"
-                ><i class="fab fa-youtube"></i
-              ></a>
-            </div>
-          </div>
-          <div class="footer-column">
-            <h3>Quick Links</h3>
-            <ul>
-              <li>
-                <a href="index.html"><i class="fas fa-arrow-right"></i> Home</a>
-              </li>
-              <li>
-                <a href="about.html"
-                  ><i class="fas fa-arrow-right"></i> About Us</a
-                >
-              </li>
-              <li>
-                <a href="game.html"
-                  ><i class="fas fa-arrow-right"></i> Our Game</a
-                >
-              </li>
-              <li>
-                <a href="team.html"
-                  ><i class="fas fa-arrow-right"></i> Our Team</a
-                >
-              </li>
-              <li>
-                <a href="contact.html"
-                  ><i class="fas fa-arrow-right"></i> Contact</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div class="footer-column">
-            <h3>Game Info</h3>
-            <ul>
-              <li>
-                <a href="features.html"
-                  ><i class="fas fa-arrow-right"></i> Features</a
-                >
-              </li>
-              <li>
-                <a href="blog.html"
-                  ><i class="fas fa-arrow-right"></i> Development Blog</a
-                >
-              </li>
-              <li>
-                <a href="roadmap.html"
-                  ><i class="fas fa-arrow-right"></i> Roadmap</a
-                >
-              </li>
-              <li>
-                <a href="faq.html"><i class="fas fa-arrow-right"></i> FAQ</a>
-              </li>
-              <li>
-                <a href="support.html"
-                  ><i class="fas fa-arrow-right"></i> Support</a
-                >
-              </li>
-            </ul>
-          </div>
-          <div class="footer-column">
-            <h3>Contact Us</h3>
-            <ul>
-              <li>
-                <a href="mailto:dportillobeckand@gmail.com"
-                  ><i class="fas fa-envelope"></i> dportillobeckand@gmail.com</a
-                >
-              </li>
-              <li>
-                <a href="#"><i class="fas fa-map-marker-alt"></i> Belgium</a>
-              </li>
-              <li>
-                <a href="tel:+32456101381"
-                  ><i class="fas fa-phone"></i> +32 456 101 381</a
-                >
-              </li>
-            </ul>
+            <h3>Our Values</h3>
+            <p>
+              Creativity, Innovation, Player-Centric Design, Quality, and
+              Passion are the core values that drive every game we create.
+            </p>
           </div>
         </div>
-        <div class="copyright">
-          &copy; 2025 Beans Studio. All rights reserved. Shields and Trebuchets
-          is a trademark of Beans Studio.
+
+        <h2 class="section-title">OUR STORY</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-date">February 2023</div>
+            <h3>The Beginning</h3>
+            <p>
+              Beans Studio was founded by a group of friends united by their
+              love for pixel-art games and strategic gameplay. What started as
+              late-night gaming discussions evolved into a shared dream.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-date">May 2023</div>
+            <h3>Concept Development</h3>
+            <p>
+              Our team began developing the concept for "Shields and
+              Trebuchets" - a unique blend of base defense, farming, and
+              strategy set in a charming pixel-art world.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-date">August 2023</div>
+            <h3>First Prototype</h3>
+            <p>
+              After months of design work, we created our first playable
+              prototype. This milestone validated our core gameplay mechanics
+              and artistic direction.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-date">December 2023</div>
+            <h3>Studio Expansion</h3>
+            <p>
+              We expanded our team with talented artists and programmers to
+              accelerate development and bring our vision to life with higher
+              quality.
+            </p>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-date">Present</div>
+            <h3>Full Development</h3>
+            <p>
+              Currently in active development, "Shields and Trebuchets" is
+              shaping up to be everything we dreamed of and more. We're
+              polishing gameplay and adding exciting features.
+            </p>
+          </div>
         </div>
-      </footer>
+
+        <h2 class="section-title">BY THE NUMBERS</h2>
+        <div class="stats">
+          <div class="stat-card floating">
+            <div class="stat-number">5</div>
+            <h3>Team Members</h3>
+            <p>Passionate creators</p>
+          </div>
+
+          <div class="stat-card floating-2">
+            <div class="stat-number">10K+</div>
+            <h3>Lines of Code</h3>
+            <p>And counting</p>
+          </div>
+
+          <div class="stat-card floating-3">
+            <div class="stat-number">500+</div>
+            <h3>Art Assets</h3>
+            <p>Sprites, animations, and tiles</p>
+          </div>
+
+          <div class="stat-card floating">
+            <div class="stat-number">1</div>
+            <h3>Amazing Game</h3>
+            <p>In development</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter Section -->
+      <section class="newsletter">
+        <h2>JOIN OUR ADVENTURE</h2>
+        <p>
+          Subscribe to get exclusive updates, behind-the-scenes content, and
+          early access to game demos!
+        </p>
+        <form class="newsletter-form" id="subscribe-form">
+          <input
+            type="email"
+            id="subscribe-email"
+            placeholder="Enter your email address"
+            required
+          />
+          <button type="submit">Subscribe</button>
+          <div class="loader" id="subscribe-loader"></div>
+        </form>
+        <div class="subscribed-message" id="subscribed-message">
+          <i class="fas fa-check-circle"></i> Thanks for subscribing! You'll
+          receive updates soon.
+        </div>
+      </section>
+
+      <section class="cta-section">
+        <h2>JOIN OUR JOURNEY</h2>
+        <p>
+          Become part of the Beans Studio community and help shape the future
+          of our games
+        </p>
+        <div class="cta-buttons">
+          <a href="#" class="cta-button secondary-cta">Join Discord</a>
+          <a href="#" class="cta-button secondary-cta">Follow on Instagram</a>
+          <a href="#" class="cta-button secondary-cta">Subscribe on YouTube</a>
+        </div>
+      </section>
     </div>
 
-    <script>
-      // Highlight active page in navigation
-      document.addEventListener("DOMContentLoaded", function () {
-        const currentPage = window.location.pathname.split("/").pop();
-        const navItems = document.querySelectorAll(".nav-item");
+    <!-- Footer -->
+    <footer>
+      <div class="footer-content">
+        <div class="footer-column">
+          <h3>Beans Studio</h3>
+          <p>Creating pixel-perfect adventures with passion.</p>
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-discord"></i></a>
+            <a href="instagram.com/beansstudioofficial"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a
+              href="https://www.youtube.com/@BeansStudio-yt?sub_confirmation=1"
+              ><i class="fab fa-youtube"></i
+            ></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h3>Quick Links</h3>
+          <ul>
+            <li>
+              <a href="index.html"><i class="fas fa-arrow-right"></i> Home</a>
+            </li>
+            <li>
+              <a href="about.html"
+                ><i class="fas fa-arrow-right"></i> About Us</a
+              >
+            </li>
+            <li>
+              <a href="game.html"
+                ><i class="fas fa-arrow-right"></i> Our Game</a
+              >
+            </li>
+            <li>
+              <a href="team.html"
+                ><i class="fas fa-arrow-right"></i> Our Team</a
+              >
+            </li>
+            <li>
+              <a href="contact.html"
+                ><i class="fas fa-arrow-right"></i> Contact</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Game Info</h3>
+          <ul>
+            <li>
+              <a href="features.html"
+                ><i class="fas fa-arrow-right"></i> Features</a
+              >
+            </li>
+            <li>
+              <a href="blog.html"
+                ><i class="fas fa-arrow-right"></i> Development Blog</a
+              >
+            </li>
+            <li>
+              <a href="roadmap.html"
+                ><i class="fas fa-arrow-right"></i> Roadmap</a
+              >
+            </li>
+            <li>
+              <a href="faq.html"><i class="fas fa-arrow-right"></i> FAQ</a>
+            </li>
+            <li>
+              <a href="support.html"
+                ><i class="fas fa-arrow-right"></i> Support</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Contact Us</h3>
+          <ul>
+            <li>
+              <a href="mailto:dportillobeckand@gmail.com"
+                ><i class="fas fa-envelope"></i> dportillobeckand@gmail.com</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-map-marker-alt"></i> Belgium</a>
+            </li>
+            <li>
+              <a href="tel:+32456101381"
+                ><i class="fas fa-phone"></i> +32 456 101 381</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">
+        &copy; 2025 Beans Studio. All rights reserved. Shields and Trebuchets
+        is a trademark of Beans Studio.
+      </div>
+    </footer>
+  </div>
 
-        navItems.forEach((item) => {
-          const itemHref = item.getAttribute("href");
-          if (itemHref === currentPage) {
-            item.classList.add("active");
-          }
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toast-message">Operation completed successfully</span>
+  </div>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAwuXJVVj8hXspC6eT5o6eQw6ayEoeCulo",
+      authDomain: "friendly-path-408913.firebaseapp.com",
+      databaseURL: "https://friendly-path-408913-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "friendly-path-408913",
+      storageBucket: "friendly-path-408913.firebasestorage.app",
+      messagingSenderId: "277938290410",
+      appId: "1:277938290410:web:6626adb2c06d1ae96d2193",
+      measurementId: "G-2N5YQHS2TF"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // DOM Elements
+    const subscribeForm = document.getElementById("subscribe-form");
+    const subscribeEmail = document.getElementById("subscribe-email");
+    const subscribedMessage = document.getElementById("subscribed-message");
+    const subscribeLoader = document.getElementById("subscribe-loader");
+    const toast = document.getElementById("toast");
+    const toastMessage = document.getElementById("toast-message");
+    
+    // Show toast notification
+    function showToast(message, isSuccess = true) {
+      toastMessage.textContent = message;
+      toast.className = "toast " + (isSuccess ? "success" : "error");
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+    
+    // Handle subscription form
+    subscribeForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      
+      const email = subscribeEmail.value.trim();
+      
+      if (!email) {
+        showToast("Please enter a valid email", false);
+        return;
+      }
+      
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showToast("Please enter a valid email address", false);
+        return;
+      }
+      
+      try {
+        subscribeLoader.style.display = "block";
+        
+        // Check if email already exists
+        const snapshot = await db.collection("subscribers")
+          .where("email", "==", email)
+          .get();
+          
+        if (!snapshot.empty) {
+          showToast("You're already subscribed!", true);
+          subscribedMessage.style.display = "block";
+          setTimeout(() => {
+            subscribedMessage.style.display = "none";
+          }, 5000);
+          return;
+        }
+        
+        // Add new subscriber with additional metadata
+        await db.collection("subscribers").add({
+          email: email,
+          subscribedAt: new Date(),
+          status: "active",
+          source: "website",
+          ip: await fetchIP(),
+          userAgent: navigator.userAgent
         });
+        
+        // Show success message
+        subscribedMessage.style.display = "block";
+        subscribeForm.reset();
+        
+        setTimeout(() => {
+          subscribedMessage.style.display = "none";
+        }, 5000);
+        
+        showToast("Thank you for subscribing!");
+      } catch (error) {
+        showToast("Error saving subscription: " + error.message, false);
+        console.error("Subscription error:", error);
+      } finally {
+        subscribeLoader.style.display = "none";
+      }
+    });
+
+    // Fetch user's IP (for analytics)
+    async function fetchIP() {
+      try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+      } catch {
+        return "unknown";
+      }
+    }
+
+    // Highlight active page in navigation
+    document.addEventListener("DOMContentLoaded", function () {
+      const currentPage = window.location.pathname.split("/").pop();
+      const navItems = document.querySelectorAll(".nav-item");
+
+      navItems.forEach((item) => {
+        const itemHref = item.getAttribute("href");
+        if (itemHref === currentPage) {
+          item.classList.add("active");
+        }
       });
 
       // Particle background effect
-      document.addEventListener("DOMContentLoaded", function () {
-        const container = document.body;
-        const particleCount = 30;
+      const container = document.body;
+      const particleCount = 30;
 
-        for (let i = 0; i < particleCount; i++) {
-          const particle = document.createElement("div");
-          particle.style.position = "fixed";
-          particle.style.width = Math.random() * 5 + 2 + "px";
-          particle.style.height = particle.style.width;
-          particle.style.background =
-            i % 2 === 0 ? "rgba(0, 201, 255, 0.5)" : "rgba(0, 255, 157, 0.5)";
-          particle.style.borderRadius = "50%";
-          particle.style.top = Math.random() * 100 + "vh";
-          particle.style.left = Math.random() * 100 + "vw";
-          particle.style.zIndex = "-1";
-          particle.style.pointerEvents = "none";
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement("div");
+        particle.style.position = "fixed";
+        particle.style.width = Math.random() * 5 + 2 + "px";
+        particle.style.height = particle.style.width;
+        particle.style.background =
+          i % 2 === 0 ? "rgba(0, 201, 255, 0.5)" : "rgba(0, 255, 157, 0.5)";
+        particle.style.borderRadius = "50%";
+        particle.style.top = Math.random() * 100 + "vh";
+        particle.style.left = Math.random() * 100 + "vw";
+        particle.style.zIndex = "-1";
+        particle.style.pointerEvents = "none";
 
-          container.appendChild(particle);
+        container.appendChild(particle);
 
-          // Animate particles
-          animateParticle(particle);
-        }
+        // Animate particles
+        animateParticle(particle);
+      }
 
-        function animateParticle(element) {
-          const startX = parseInt(element.style.left);
-          const startY = parseInt(element.style.top);
-          const amplitude = 30 + Math.random() * 70;
-          const duration = 3000 + Math.random() * 5000;
+      function animateParticle(element) {
+        const startX = parseInt(element.style.left);
+        const startY = parseInt(element.style.top);
+        const amplitude = 30 + Math.random() * 70;
+        const duration = 3000 + Math.random() * 5000;
 
-          let startTime = null;
+        let startTime = null;
 
-          function moveParticle(timestamp) {
-            if (!startTime) startTime = timestamp;
-            const progress = timestamp - startTime;
+        function moveParticle(timestamp) {
+          if (!startTime) startTime = timestamp;
+          const progress = timestamp - startTime;
 
-            // Move in a circular pattern
-            const x =
-              startX +
-              Math.sin((progress / duration) * Math.PI * 2) * amplitude;
-            const y =
-              startY +
-              Math.cos((progress / duration) * Math.PI * 2) * amplitude;
+          // Move in a circular pattern
+          const x =
+            startX +
+            Math.sin((progress / duration) * Math.PI * 2) * amplitude;
+          const y =
+            startY +
+            Math.cos((progress / duration) * Math.PI * 2) * amplitude;
 
-            element.style.left = x + "px";
-            element.style.top = y + "px";
-
-            requestAnimationFrame(moveParticle);
-          }
+          element.style.left = x + "px";
+          element.style.top = y + "px";
 
           requestAnimationFrame(moveParticle);
         }
-      });
+
+        requestAnimationFrame(moveParticle);
+      }
 
       // Hover effect for cards
       const cards = document.querySelectorAll(".about-card, .stat-card");
@@ -1054,6 +1310,7 @@
           this.style.borderColor = "rgba(0, 201, 255, 0.2)";
         });
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>
