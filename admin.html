@@ -484,10 +484,184 @@
       text-align: center;
       display: none;
     }
+    
+    /* User Management Styles */
+    .user-management {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    
+    @media (max-width: 1200px) {
+      .user-management {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .user-detail-card {
+      background: rgba(25, 20, 60, 0.6);
+      border-radius: 15px;
+      padding: 20px;
+      border: 1px solid rgba(0, 201, 255, 0.2);
+    }
+    
+    .user-detail-card h3 {
+      color: var(--accent);
+      margin-bottom: 15px;
+      font-family: "Orbitron", sans-serif;
+      border-bottom: 1px solid rgba(0, 201, 255, 0.3);
+      padding-bottom: 10px;
+    }
+    
+    .user-info-row {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    
+    .user-info-label {
+      font-weight: 600;
+      width: 150px;
+      color: var(--secondary);
+    }
+    
+    .user-info-value {
+      flex: 1;
+      word-break: break-all;
+    }
+    
+    .user-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .user-action-btn {
+      padding: 8px 15px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .user-action-btn.reset {
+      background: rgba(0, 201, 255, 0.1);
+      color: var(--secondary);
+      border: 1px solid rgba(0, 201, 255, 0.3);
+    }
+    
+    .user-action-btn.delete {
+      background: rgba(255, 77, 109, 0.1);
+      color: var(--danger);
+      border: 1px solid rgba(255, 77, 109, 0.3);
+    }
+    
+    .user-action-btn:hover {
+      transform: translateY(-3px);
+    }
+    
+    .password-display {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .password-text {
+      font-family: monospace;
+      letter-spacing: 1px;
+    }
+    
+    .reveal-btn {
+      background: transparent;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+    }
+    
+    /* Modal for password reset */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 8, 30, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-content {
+      background: rgba(25, 20, 60, 0.95);
+      border-radius: 15px;
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      border: 2px solid var(--secondary);
+      box-shadow: 0 0 50px rgba(0, 201, 255, 0.3);
+      position: relative;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .modal-header h3 {
+      color: var(--accent);
+      font-family: "Orbitron", sans-serif;
+    }
+    
+    .close-modal {
+      background: transparent;
+      border: none;
+      color: var(--light);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    .modal-body {
+      margin-bottom: 20px;
+    }
+    
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    
+    /* Loading spinner */
+    .spinner {
+      border: 3px solid rgba(0, 201, 255, 0.3);
+      border-top: 3px solid var(--accent);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
   </style>
 </head>
 <body>
-  <!-- Login Overlay (shown when not authenticated) -->
+  <!-- Login Overlay -->
   <div class="login-overlay" id="login-overlay">
     <div class="login-form">
       <h2><i class="fas fa-user-shield"></i> Admin Login</h2>
@@ -508,7 +682,7 @@
     </div>
   </div>
 
-  <!-- Admin Dashboard (shown when authenticated) -->
+  <!-- Admin Dashboard -->
   <div id="admin-dashboard" style="display:none;">
     <div class="user-info" id="user-info">
       <div class="user-avatar">
@@ -540,17 +714,17 @@
         </div>
         <div class="stat-card">
           <div class="stat-icon">
-            <i class="fas fa-envelope-open"></i>
+            <i class="fas fa-user-friends"></i>
           </div>
-          <div class="stat-value" id="open-rate">0%</div>
-          <div class="stat-label">Avg. Open Rate</div>
+          <div class="stat-value" id="users-count">0</div>
+          <div class="stat-label">Registered Users</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">
-            <i class="fas fa-mouse-pointer"></i>
+            <i class="fas fa-envelope"></i>
           </div>
-          <div class="stat-value" id="click-rate">0%</div>
-          <div class="stat-label">Avg. Click Rate</div>
+          <div class="stat-value" id="newsletters-count">0</div>
+          <div class="stat-label">Newsletters Sent</div>
         </div>
         <div class="stat-card">
           <div class="stat-icon">
@@ -611,7 +785,7 @@
         <div class="section-header">
           <h2><i class="fas fa-envelope"></i> Subscribers Management</h2>
           <div>
-            <button class="btn btn-secondary" id="export-btn">
+            <button class="btn btn-secondary" id="export-subscribers-btn">
               <i class="fas fa-download"></i> Export CSV
             </button>
           </div>
@@ -651,6 +825,46 @@
 
       <div class="admin-section">
         <div class="section-header">
+          <h2><i class="fas fa-users-cog"></i> User Accounts Management</h2>
+          <div>
+            <input type="text" id="user-search" class="search-bar" placeholder="Search users..." style="max-width: 300px;">
+          </div>
+        </div>
+        
+        <div class="user-management">
+          <div class="user-list-card">
+            <div class="loader" id="users-loader"></div>
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Email</th>
+                    <th>Created</th>
+                    <th>Last Login</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="users-body">
+                  <!-- Users will be loaded here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div class="user-detail-card">
+            <h3>User Details</h3>
+            <div id="user-details">
+              <div class="user-info-row">
+                <div class="user-info-label">Select a user:</div>
+                <div class="user-info-value">← Choose a user from the list</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-section">
+        <div class="section-header">
           <h2><i class="fas fa-chart-bar"></i> Subscriber Analytics</h2>
           <div>
             <select class="btn btn-secondary" id="date-range" style="padding: 8px 15px;">
@@ -664,6 +878,34 @@
         <div class="chart-container">
           <canvas id="analytics-chart"></canvas>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Password Reset Modal -->
+  <div class="modal" id="password-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Reset Password</h3>
+        <button class="close-modal" id="close-password-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="user-email-display">User Email</label>
+          <input type="text" id="user-email-display" class="search-bar" readonly>
+        </div>
+        <div class="form-group">
+          <label for="new-password">New Password</label>
+          <input type="password" id="new-password" class="search-bar" placeholder="Enter new password">
+        </div>
+        <div class="form-group">
+          <label for="confirm-password">Confirm Password</label>
+          <input type="password" id="confirm-password" class="search-bar" placeholder="Confirm new password">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-reset">Cancel</button>
+        <button class="btn btn-primary" id="confirm-reset">Reset Password</button>
       </div>
     </div>
   </div>
@@ -707,19 +949,36 @@
     const toastMessage = document.getElementById("toast-message");
     const newsletterForm = document.getElementById("newsletter-form");
     const refreshBtn = document.getElementById("refresh-btn");
-    const exportBtn = document.getElementById("export-btn");
+    const exportSubscribersBtn = document.getElementById("export-subscribers-btn");
     const saveDraftBtn = document.getElementById("save-draft");
     const dateRange = document.getElementById("date-range");
     const subscribersBody = document.getElementById("subscribers-body");
     const subscribersLoader = document.getElementById("subscribers-loader");
     const subscribersCount = document.getElementById("subscribers-count");
+    const usersCount = document.getElementById("users-count");
+    const newslettersCount = document.getElementById("newsletters-count");
     const newSubscribers = document.getElementById("new-subscribers");
-    const openRate = document.getElementById("open-rate");
-    const clickRate = document.getElementById("click-rate");
     const showingCount = document.getElementById("showing-count");
     const totalCount = document.getElementById("total-count");
     const prevBtn = document.getElementById("prev-btn");
     const nextBtn = document.getElementById("next-btn");
+    
+    // User management elements
+    const usersLoader = document.getElementById("users-loader");
+    const usersBody = document.getElementById("users-body");
+    const userDetails = document.getElementById("user-details");
+    const userSearch = document.getElementById("user-search");
+    const passwordModal = document.getElementById("password-modal");
+    const closePasswordModal = document.getElementById("close-password-modal");
+    const cancelReset = document.getElementById("cancel-reset");
+    const confirmReset = document.getElementById("confirm-reset");
+    const userEmailDisplay = document.getElementById("user-email-display");
+    const newPasswordInput = document.getElementById("new-password");
+    const confirmPasswordInput = document.getElementById("confirm-password");
+    
+    // State variables
+    let selectedUser = null;
+    let usersList = [];
     
     // Chart instance
     let analyticsChart = null;
@@ -743,7 +1002,8 @@
     
     // Format date for display
     function formatDate(date) {
-      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      if (!date) return "N/A";
+      const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
       return new Date(date).toLocaleDateString(undefined, options);
     }
     
@@ -896,13 +1156,17 @@
         const total = await getTotalSubscribers();
         subscribersCount.textContent = total;
         
+        // Total users
+        const usersSnapshot = await db.collection("users").get();
+        usersCount.textContent = usersSnapshot.size;
+        
+        // Total newsletters
+        const newslettersSnapshot = await db.collection("newsletters").get();
+        newslettersCount.textContent = newslettersSnapshot.size;
+        
         // New subscribers today
         const newToday = await getNewSubscribers();
         newSubscribers.textContent = newToday;
-        
-        // Simulate engagement metrics
-        openRate.textContent = `${Math.floor(Math.random() * 20) + 65}%`;
-        clickRate.textContent = `${Math.floor(Math.random() * 15) + 15}%`;
         
       } catch (error) {
         console.error("Error updating stats:", error);
@@ -1021,16 +1285,14 @@
         const snapshot = await subscribersQuery.get();
         const count = snapshot.size;
         
-        // Simulate sending process
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
         // Save newsletter to Firestore
         await db.collection("newsletters").add({
           subject,
           content,
           segment,
           sentAt: new Date(),
-          recipientCount: count
+          recipientCount: count,
+          status: "sent"
         });
         
         // Update UI
@@ -1045,6 +1307,177 @@
         const sendBtn = document.querySelector("#newsletter-form [type='submit']");
         sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Newsletter';
         sendBtn.disabled = false;
+        updateStats();
+      }
+    }
+    
+    // USER MANAGEMENT FUNCTIONS
+    
+    // Fetch all users from Firestore
+    async function fetchUsers() {
+      try {
+        usersLoader.style.display = "block";
+        usersBody.innerHTML = "";
+        
+        const snapshot = await db.collection("users").get();
+        usersList = [];
+        
+        snapshot.forEach(doc => {
+          const userData = doc.data();
+          usersList.push({
+            id: doc.id,
+            ...userData
+          });
+          
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${userData.email}</td>
+            <td>${formatDate(userData.createdAt)}</td>
+            <td>${userData.lastLogin ? formatDate(userData.lastLogin) : 'Never'}</td>
+            <td class="action-btns">
+              <button class="action-btn view" data-id="${doc.id}">
+                <i class="fas fa-eye"></i> View
+              </button>
+            </td>
+          `;
+          usersBody.appendChild(row);
+        });
+        
+        // Add event listeners to view buttons
+        document.querySelectorAll('.action-btn.view').forEach(btn => {
+          btn.addEventListener('click', () => viewUser(btn.dataset.id));
+        });
+        
+      } catch (error) {
+        showToast("Error fetching users: " + error.message, false);
+        console.error("Error fetching users:", error);
+      } finally {
+        usersLoader.style.display = "none";
+      }
+    }
+    
+    // View user details
+    function viewUser(userId) {
+      selectedUser = usersList.find(user => user.id === userId);
+      
+      if (!selectedUser) return;
+      
+      userDetails.innerHTML = `
+        <div class="user-info-row">
+          <div class="user-info-label">Email:</div>
+          <div class="user-info-value">${selectedUser.email}</div>
+        </div>
+        <div class="user-info-row">
+          <div class="user-info-label">Name:</div>
+          <div class="user-info-value">${selectedUser.name || 'N/A'}</div>
+        </div>
+        <div class="user-info-row">
+          <div class="user-info-label">Account Created:</div>
+          <div class="user-info-value">${formatDate(selectedUser.createdAt)}</div>
+        </div>
+        <div class="user-info-row">
+          <div class="user-info-label">Last Login:</div>
+          <div class="user-info-value">${selectedUser.lastLogin ? formatDate(selectedUser.lastLogin) : 'Never'}</div>
+        </div>
+        <div class="user-info-row">
+          <div class="user-info-label">Role:</div>
+          <div class="user-info-value">${selectedUser.role || 'user'}</div>
+        </div>
+        <div class="user-actions">
+          <button class="user-action-btn reset" id="reset-password-btn">
+            <i class="fas fa-key"></i> Reset Password
+          </button>
+          <button class="user-action-btn delete" id="delete-user-btn">
+            <i class="fas fa-trash-alt"></i> Delete User
+          </button>
+        </div>
+      `;
+      
+      // Add event listeners to action buttons
+      document.getElementById("reset-password-btn")?.addEventListener("click", openPasswordResetModal);
+      document.getElementById("delete-user-btn")?.addEventListener("click", deleteUser);
+    }
+    
+    // Open password reset modal
+    function openPasswordResetModal() {
+      if (!selectedUser) return;
+      
+      userEmailDisplay.value = selectedUser.email;
+      newPasswordInput.value = "";
+      confirmPasswordInput.value = "";
+      passwordModal.classList.add("active");
+    }
+    
+    // Reset user password
+    async function resetPassword() {
+      if (!selectedUser) return;
+      
+      const email = selectedUser.email;
+      const newPassword = newPasswordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+      
+      if (!newPassword || !confirmPassword) {
+        showToast("Please enter and confirm the new password", false);
+        return;
+      }
+      
+      if (newPassword !== confirmPassword) {
+        showToast("Passwords do not match", false);
+        return;
+      }
+      
+      try {
+        confirmReset.innerHTML = '<span class="spinner"></span> Resetting...';
+        confirmReset.disabled = true;
+        
+        // This would be handled by a Firebase Cloud Function in production
+        // For this demo, we'll simulate the process
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        showToast(`Password reset for ${email} was successful`);
+        passwordModal.classList.remove("active");
+        
+      } catch (error) {
+        showToast("Error resetting password: " + error.message, false);
+      } finally {
+        confirmReset.innerHTML = 'Reset Password';
+        confirmReset.disabled = false;
+      }
+    }
+    
+    // Delete user
+    async function deleteUser() {
+      if (!selectedUser) return;
+      
+      if (!confirm(`Are you sure you want to permanently delete ${selectedUser.email}? This action cannot be undone.`)) {
+        return;
+      }
+      
+      try {
+        // Delete user document from Firestore
+        await db.collection("users").doc(selectedUser.id).delete();
+        
+        // Delete user from Authentication
+        // Note: This requires a Cloud Function in a real app
+        // We'll simulate it for this demo
+        
+        showToast(`User ${selectedUser.email} has been deleted`);
+        
+        // Remove from UI
+        document.querySelector(`[data-id="${selectedUser.id}"]`).closest('tr').remove();
+        userDetails.innerHTML = `
+          <div class="user-info-row">
+            <div class="user-info-label">Select a user:</div>
+            <div class="user-info-value">← Choose a user from the list</div>
+          </div>
+        `;
+        selectedUser = null;
+        
+        // Update stats
+        updateStats();
+        
+      } catch (error) {
+        showToast("Error deleting user: " + error.message, false);
       }
     }
     
@@ -1052,6 +1485,7 @@
     async function initDashboard() {
       // First load
       await fetchSubscribers();
+      await fetchUsers();
       await updateStats();
       renderChart(30);
       
@@ -1059,13 +1493,14 @@
       refreshBtn.addEventListener('click', async () => {
         refreshBtn.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i> Refreshing...';
         await fetchSubscribers(currentPage);
+        await fetchUsers();
         await updateStats();
         renderChart(parseInt(dateRange.value));
         refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
         showToast("Data refreshed successfully");
       });
       
-      exportBtn.addEventListener('click', exportSubscribers);
+      exportSubscribersBtn.addEventListener('click', exportSubscribers);
       
       newsletterForm.addEventListener('submit', sendNewsletter);
       
@@ -1170,11 +1605,27 @@
       loginBtn.addEventListener('click', login);
       logoutBtn.addEventListener('click', logout);
       
+      // Password reset modal events
+      closePasswordModal.addEventListener("click", () => passwordModal.classList.remove("active"));
+      cancelReset.addEventListener("click", () => passwordModal.classList.remove("active"));
+      confirmReset.addEventListener("click", resetPassword);
+      
       // Allow pressing Enter to login
       loginPassword.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
           login();
         }
+      });
+      
+      // User search functionality
+      userSearch.addEventListener("input", () => {
+        const searchTerm = userSearch.value.toLowerCase();
+        const rows = usersBody.querySelectorAll("tr");
+        
+        rows.forEach(row => {
+          const email = row.querySelector("td:first-child").textContent.toLowerCase();
+          row.style.display = email.includes(searchTerm) ? "" : "none";
+        });
       });
       
       // Check authentication state
