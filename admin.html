@@ -484,6 +484,22 @@
       text-align: center;
       display: none;
     }
+
+    .google-login {
+      background: #4285F4;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      margin-top: 15px;
+    }
     
     /* User Management Styles */
     .user-management {
@@ -676,6 +692,9 @@
       <button class="login-submit" id="login-btn">
         <i class="fas fa-sign-in-alt"></i> Sign In
       </button>
+      <button class="google-login" id="google-login-btn">
+        <i class="fab fa-google"></i> Sign in with Google
+      </button>
       <div class="login-error" id="login-error">
         Invalid credentials or you don't have admin privileges
       </div>
@@ -700,6 +719,9 @@
         <div class="admin-nav">
           <button class="btn btn-primary" id="refresh-btn">
             <i class="fas fa-sync-alt"></i> Refresh Data
+          </button>
+          <button class="btn btn-secondary" id="create-user-btn">
+            <i class="fas fa-user-plus"></i> Create User
           </button>
         </div>
       </div>
@@ -841,6 +863,7 @@
                     <th>Email</th>
                     <th>Created</th>
                     <th>Last Login</th>
+                    <th>Role</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -910,6 +933,38 @@
     </div>
   </div>
 
+  <!-- Create User Modal -->
+  <div class="modal" id="create-user-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Create New User</h3>
+        <button class="close-modal" id="close-create-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="new-user-email">Email *</label>
+          <input type="email" id="new-user-email" class="search-bar" placeholder="user@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="new-user-password">Password *</label>
+          <input type="password" id="new-user-password" class="search-bar" placeholder="Minimum 6 characters" required>
+        </div>
+        <div class="form-group">
+          <label for="new-user-role">Role *</label>
+          <select id="new-user-role" class="search-bar" required>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+            <option value="editor">Editor</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-create">Cancel</button>
+        <button class="btn btn-primary" id="confirm-create">Create User</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div class="toast" id="toast">
     <i class="fas fa-check-circle"></i>
@@ -940,6 +995,7 @@
     const loginEmail = document.getElementById("login-email");
     const loginPassword = document.getElementById("login-password");
     const loginBtn = document.getElementById("login-btn");
+    const googleLoginBtn = document.getElementById("google-login-btn");
     const loginError = document.getElementById("login-error");
     const logoutBtn = document.getElementById("logout-btn");
     const userInfo = document.getElementById("user-info");
@@ -949,6 +1005,7 @@
     const toastMessage = document.getElementById("toast-message");
     const newsletterForm = document.getElementById("newsletter-form");
     const refreshBtn = document.getElementById("refresh-btn");
+    const createUserBtn = document.getElementById("create-user-btn");
     const exportSubscribersBtn = document.getElementById("export-subscribers-btn");
     const saveDraftBtn = document.getElementById("save-draft");
     const dateRange = document.getElementById("date-range");
@@ -975,6 +1032,15 @@
     const userEmailDisplay = document.getElementById("user-email-display");
     const newPasswordInput = document.getElementById("new-password");
     const confirmPasswordInput = document.getElementById("confirm-password");
+    
+    // Create user elements
+    const createUserModal = document.getElementById("create-user-modal");
+    const closeCreateModal = document.getElementById("close-create-modal");
+    const cancelCreate = document.getElementById("cancel-create");
+    const confirmCreate = document.getElementById("confirm-create");
+    const newUserEmail = document.getElementById("new-user-email");
+    const newUserPassword = document.getElementById("new-user-password");
+    const newUserRole = document.getElementById("new-user-role");
     
     // State variables
     let selectedUser = null;
@@ -1334,6 +1400,7 @@
             <td>${userData.email}</td>
             <td>${formatDate(userData.createdAt)}</td>
             <td>${userData.lastLogin ? formatDate(userData.lastLogin) : 'Never'}</td>
+            <td>${userData.role || 'user'}</td>
             <td class="action-btns">
               <button class="action-btn view" data-id="${doc.id}">
                 <i class="fas fa-eye"></i> View
@@ -1430,9 +1497,11 @@
         confirmReset.innerHTML = '<span class="spinner"></span> Resetting...';
         confirmReset.disabled = true;
         
-        // This would be handled by a Firebase Cloud Function in production
-        // For this demo, we'll simulate the process
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Use Firebase Authentication to update password
+        const user = await auth.getUserByEmail(email);
+        await auth.updateUser(user.uid, {
+          password: newPassword
+        });
         
         showToast(`Password reset for ${email} was successful`);
         passwordModal.classList.remove("active");
@@ -1454,12 +1523,12 @@
       }
       
       try {
+        // Delete user from Authentication
+        const user = await auth.getUserByEmail(selectedUser.email);
+        await auth.deleteUser(user.uid);
+        
         // Delete user document from Firestore
         await db.collection("users").doc(selectedUser.id).delete();
-        
-        // Delete user from Authentication
-        // Note: This requires a Cloud Function in a real app
-        // We'll simulate it for this demo
         
         showToast(`User ${selectedUser.email} has been deleted`);
         
@@ -1478,6 +1547,54 @@
         
       } catch (error) {
         showToast("Error deleting user: " + error.message, false);
+      }
+    }
+    
+    // Create new user
+    async function createUser() {
+      const email = newUserEmail.value.trim();
+      const password = newUserPassword.value;
+      const role = newUserRole.value;
+      
+      if (!email || !password) {
+        showToast("Email and password are required", false);
+        return;
+      }
+      
+      if (password.length < 6) {
+        showToast("Password must be at least 6 characters", false);
+        return;
+      }
+      
+      try {
+        confirmCreate.innerHTML = '<span class="spinner"></span> Creating...';
+        confirmCreate.disabled = true;
+        
+        // Create user in Firebase Authentication
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        
+        // Add user to Firestore
+        await db.collection("users").doc(userCredential.user.uid).set({
+          email: email,
+          createdAt: new Date(),
+          role: role,
+          lastLogin: null
+        });
+        
+        showToast(`User ${email} created successfully`);
+        createUserModal.classList.remove("active");
+        newUserEmail.value = "";
+        newUserPassword.value = "";
+        
+        // Refresh users list
+        await fetchUsers();
+        await updateStats();
+        
+      } catch (error) {
+        showToast("Error creating user: " + error.message, false);
+      } finally {
+        confirmCreate.innerHTML = 'Create User';
+        confirmCreate.disabled = false;
       }
     }
     
@@ -1528,19 +1645,43 @@
       dateRange.addEventListener('change', () => {
         renderChart(parseInt(dateRange.value));
       });
+      
+      // User creation
+      createUserBtn.addEventListener('click', () => {
+        createUserModal.classList.add("active");
+      });
     }
     
     // Authentication functions
     function checkAuthState() {
       auth.onAuthStateChanged(user => {
-        if (user && user.email === "admin@beansstudio.com") {
-          // Admin user authenticated
-          loginOverlay.style.display = "none";
-          adminDashboard.style.display = "block";
-          userEmail.textContent = user.email;
-          initDashboard();
+        if (user) {
+          // Check if user has admin privileges
+          db.collection("users").doc(user.uid).get()
+            .then(doc => {
+              if (doc.exists && (doc.data().role === "admin")) {
+                // Admin user authenticated
+                loginOverlay.style.display = "none";
+                adminDashboard.style.display = "block";
+                userEmail.textContent = user.email;
+                initDashboard();
+              } else {
+                // Not admin
+                auth.signOut();
+                loginError.textContent = "You don't have admin privileges";
+                loginError.style.display = "block";
+                loginOverlay.style.display = "flex";
+                adminDashboard.style.display = "none";
+              }
+            })
+            .catch(error => {
+              console.error("Error checking user role:", error);
+              auth.signOut();
+              loginError.textContent = "Error verifying permissions";
+              loginError.style.display = "block";
+            });
         } else {
-          // Not authenticated or not admin
+          // Not authenticated
           loginOverlay.style.display = "flex";
           adminDashboard.style.display = "none";
         }
@@ -1563,24 +1704,21 @@
       loginBtn.disabled = true;
       
       auth.signInWithEmailAndPassword(email, password)
-        .then(() => {
-          // Check if user is admin
-          if (auth.currentUser.email === "admin@beansstudio.com") {
-            showToast("Welcome back, Admin!");
-          } else {
-            // Not admin - sign out
-            auth.signOut();
-            loginError.textContent = "You don't have admin privileges";
-            loginError.style.display = "block";
-            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
-            loginBtn.disabled = false;
-          }
-        })
         .catch(error => {
           loginError.textContent = error.message;
           loginError.style.display = "block";
           loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
           loginBtn.disabled = false;
+        });
+    }
+    
+    // Google login function
+    function googleLogin() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .catch(error => {
+          loginError.textContent = error.message;
+          loginError.style.display = "block";
         });
     }
     
@@ -1603,12 +1741,18 @@
     document.addEventListener('DOMContentLoaded', () => {
       // Set up event listeners
       loginBtn.addEventListener('click', login);
+      googleLoginBtn.addEventListener('click', googleLogin);
       logoutBtn.addEventListener('click', logout);
       
       // Password reset modal events
       closePasswordModal.addEventListener("click", () => passwordModal.classList.remove("active"));
       cancelReset.addEventListener("click", () => passwordModal.classList.remove("active"));
       confirmReset.addEventListener("click", resetPassword);
+      
+      // Create user modal events
+      closeCreateModal.addEventListener("click", () => createUserModal.classList.remove("active"));
+      cancelCreate.addEventListener("click", () => createUserModal.classList.remove("active"));
+      confirmCreate.addEventListener("click", createUser);
       
       // Allow pressing Enter to login
       loginPassword.addEventListener('keypress', (e) => {
