@@ -9,6 +9,7 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <style>
     :root {
       --primary: #4a00e0;
@@ -890,6 +891,274 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    /* Auth Button Styles */
+    .auth-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      gap: 10px;
+    }
+
+    .auth-button {
+      background: rgba(15, 12, 41, 0.8);
+      color: var(--accent);
+      border: 2px solid var(--secondary);
+      border-radius: 30px;
+      padding: 10px 20px;
+      font-family: 'Exo 2', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 201, 255, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .auth-button:hover {
+      background: rgba(25, 20, 60, 0.9);
+      transform: translateY(-3px);
+      box-shadow: 0 0 25px rgba(0, 255, 157, 0.4);
+      border-color: var(--accent);
+    }
+
+    .user-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      overflow: hidden;
+    }
+
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .admin-button {
+      background: linear-gradient(45deg, #ff00aa, #ff5500);
+      color: white;
+      border: none;
+    }
+
+    /* Auth Modal */
+    .auth-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 8, 30, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .auth-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .auth-modal-content {
+      background: rgba(25, 20, 60, 0.95);
+      border-radius: 20px;
+      padding: 40px;
+      width: 90%;
+      max-width: 400px;
+      border: 2px solid var(--secondary);
+      box-shadow: 0 0 50px rgba(0, 201, 255, 0.3);
+      position: relative;
+    }
+
+    .close-auth-modal {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: var(--light);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .close-auth-modal:hover {
+      color: var(--accent);
+      transform: scale(1.2);
+    }
+
+    .auth-modal h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--accent);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+    }
+
+    .auth-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid rgba(0, 201, 255, 0.3);
+    }
+
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: rgba(240, 248, 255, 0.7);
+      font-weight: 600;
+    }
+
+    .auth-tab.active {
+      color: var(--accent);
+      border-bottom: 3px solid var(--accent);
+    }
+
+    .auth-form {
+      display: none;
+    }
+
+    .auth-form.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--light);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 15px;
+      border-radius: 10px;
+      background: rgba(15, 12, 41, 0.7);
+      border: 1px solid rgba(0, 201, 255, 0.3);
+      color: var(--light);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+    }
+
+    .auth-submit {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .auth-submit:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 20px rgba(74, 0, 224, 0.5);
+    }
+
+    .auth-divider {
+      text-align: center;
+      margin: 20px 0;
+      color: rgba(240, 248, 255, 0.7);
+      position: relative;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 40%;
+      height: 1px;
+      background: rgba(0, 201, 255, 0.3);
+    }
+
+    .auth-divider::before {
+      left: 0;
+    }
+
+    .auth-divider::after {
+      right: 0;
+    }
+
+    .social-auth {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .social-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .social-btn.google {
+      background: #DB4437;
+    }
+
+    .social-btn.github {
+      background: #333;
+    }
+
+    .social-btn.twitter {
+      background: #1DA1F2;
+    }
+
+    .social-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .auth-switch {
+      text-align: center;
+      margin-top: 20px;
+      color: rgba(240, 248, 255, 0.7);
+    }
+
+    .auth-switch a {
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .auth-switch a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -931,7 +1200,103 @@
       <img src="logo.png" alt="Beans Studio Logo" />
       <div class="logo-text">BEANS STUDIO</div>
     </div>
+    
+    <!-- Auth Button -->
+    <div class="auth-container">
+      <button id="auth-button" class="auth-button">
+        <i class="fas fa-user"></i> Sign In
+      </button>
+    </div>
   </header>
+
+  <!-- Auth Modal -->
+  <div class="auth-modal" id="auth-modal">
+    <div class="auth-modal-content">
+      <span class="close-auth-modal" id="close-auth-modal">&times;</span>
+      <h2>Welcome to Beans Studio</h2>
+      
+      <div class="auth-tabs">
+        <div class="auth-tab active" data-tab="signin">Sign In</div>
+        <div class="auth-tab" data-tab="signup">Sign Up</div>
+      </div>
+      
+      <!-- Sign In Form -->
+      <form id="signin-form" class="auth-form active">
+        <div class="form-group">
+          <label for="signin-email">Email</label>
+          <input type="email" id="signin-email" placeholder="your@email.com" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="signin-password">Password</label>
+          <input type="password" id="signin-password" placeholder="Your password" required>
+        </div>
+        
+        <button type="submit" class="auth-submit">Sign In</button>
+        
+        <div class="auth-divider">or continue with</div>
+        
+        <div class="social-auth">
+          <div class="social-btn google" id="google-signin">
+            <i class="fab fa-google"></i>
+          </div>
+          <div class="social-btn github" id="github-signin">
+            <i class="fab fa-github"></i>
+          </div>
+          <div class="social-btn twitter" id="twitter-signin">
+            <i class="fab fa-twitter"></i>
+          </div>
+        </div>
+        
+        <div class="auth-switch">
+          Don't have an account? <a id="switch-to-signup">Sign Up</a>
+        </div>
+      </form>
+      
+      <!-- Sign Up Form -->
+      <form id="signup-form" class="auth-form">
+        <div class="form-group">
+          <label for="signup-name">Name</label>
+          <input type="text" id="signup-name" placeholder="Your name" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="signup-email">Email</label>
+          <input type="email" id="signup-email" placeholder="your@email.com" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" placeholder="Create a password" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="signup-confirm">Confirm Password</label>
+          <input type="password" id="signup-confirm" placeholder="Confirm password" required>
+        </div>
+        
+        <button type="submit" class="auth-submit">Create Account</button>
+        
+        <div class="auth-divider">or continue with</div>
+        
+        <div class="social-auth">
+          <div class="social-btn google" id="google-signup">
+            <i class="fab fa-google"></i>
+          </div>
+          <div class="social-btn github" id="github-signup">
+            <i class="fab fa-github"></i>
+          </div>
+          <div class="social-btn twitter" id="twitter-signup">
+            <i class="fab fa-twitter"></i>
+          </div>
+        </div>
+        
+        <div class="auth-switch">
+          Already have an account? <a id="switch-to-signin">Sign In</a>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- Page Container -->
   <div class="page-container">
@@ -1213,8 +1578,18 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const auth = firebase.auth();
     
     // DOM Elements
+    const authButton = document.getElementById('auth-button');
+    const authModal = document.getElementById('auth-modal');
+    const closeAuthModal = document.getElementById('close-auth-modal');
+    const signinForm = document.getElementById('signin-form');
+    const signupForm = document.getElementById('signup-form');
+    const switchToSignup = document.getElementById('switch-to-signup');
+    const switchToSignin = document.getElementById('switch-to-signin');
+    const authTabs = document.querySelectorAll('.auth-tab');
+    const authForms = document.querySelectorAll('.auth-form');
     const subscribeForm = document.getElementById("subscribe-form");
     const subscribeEmail = document.getElementById("subscribe-email");
     const subscribedMessage = document.getElementById("subscribed-message");
@@ -1222,14 +1597,189 @@
     const toast = document.getElementById("toast");
     const toastMessage = document.getElementById("toast-message");
     
-    // Show toast notification
+    // Auth state listener
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        // User is signed in
+        authButton.innerHTML = `
+          <div class="user-avatar">
+            ${user.photoURL ? 
+              `<img src="${user.photoURL}" alt="User Avatar">` : 
+              user.email.charAt(0).toUpperCase()}
+          </div>
+          ${user.displayName || user.email}
+        `;
+        
+        // Add admin button if user is admin
+        if (user.email === "admin@beansstudio.com") {
+          const adminBtn = document.createElement('button');
+          adminBtn.className = 'auth-button admin-button';
+          adminBtn.innerHTML = '<i class="fas fa-crown"></i> Admin';
+          adminBtn.onclick = () => window.location.href = 'admin.html';
+          document.querySelector('.auth-container').appendChild(adminBtn);
+        }
+      } else {
+        // User is signed out
+        authButton.innerHTML = '<i class="fas fa-user"></i> Sign In';
+        // Remove admin button if exists
+        const adminBtn = document.querySelector('.admin-button');
+        if (adminBtn) adminBtn.remove();
+      }
+    });
+    
+    // Open auth modal
+    authButton.addEventListener('click', () => {
+      authModal.classList.add('active');
+    });
+    
+    // Close auth modal
+    closeAuthModal.addEventListener('click', () => {
+      authModal.classList.remove('active');
+    });
+    
+    // Switch between signin/signup forms
+    switchToSignup.addEventListener('click', () => {
+      authTabs.forEach(tab => tab.classList.remove('active'));
+      authForms.forEach(form => form.classList.remove('active'));
+      document.querySelector('.auth-tab[data-tab="signup"]').classList.add('active');
+      signupForm.classList.add('active');
+    });
+    
+    switchToSignin.addEventListener('click', () => {
+      authTabs.forEach(tab => tab.classList.remove('active'));
+      authForms.forEach(form => form.classList.remove('active'));
+      document.querySelector('.auth-tab[data-tab="signin"]').classList.add('active');
+      signinForm.classList.add('active');
+    });
+    
+    // Tab switching
+    authTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.getAttribute('data-tab');
+        authTabs.forEach(t => t.classList.remove('active'));
+        authForms.forEach(f => f.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(`${tabName}-form`).classList.add('active');
+      });
+    });
+    
+    // Sign in with email/password
+    signinForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const email = document.getElementById('signin-email').value;
+      const password = document.getElementById('signin-password').value;
+      
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          authModal.classList.remove('active');
+          showToast("Successfully signed in!");
+        })
+        .catch(error => {
+          showToast(`Sign in failed: ${error.message}`, false);
+        });
+    });
+    
+    // Sign up with email/password
+    signupForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const confirmPassword = document.getElementById('signup-confirm').value;
+      
+      if (password !== confirmPassword) {
+        showToast("Passwords don't match", false);
+        return;
+      }
+      
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(credential => {
+          // Save additional user data
+          return credential.user.updateProfile({
+            displayName: name
+          });
+        })
+        .then(() => {
+          // Save user to Firestore
+          return db.collection('users').doc(auth.currentUser.uid).set({
+            name: name,
+            email: email,
+            createdAt: new Date(),
+            lastLogin: new Date(),
+            role: 'user'
+          });
+        })
+        .then(() => {
+          authModal.classList.remove('active');
+          showToast("Account created successfully!");
+        })
+        .catch(error => {
+          showToast(`Sign up failed: ${error.message}`, false);
+        });
+    });
+    
+    // Social Sign In
+    function socialSignIn(provider) {
+      let authProvider;
+      
+      switch(provider) {
+        case 'google':
+          authProvider = new firebase.auth.GoogleAuthProvider();
+          break;
+        case 'github':
+          authProvider = new firebase.auth.GithubAuthProvider();
+          break;
+        case 'twitter':
+          authProvider = new firebase.auth.TwitterAuthProvider();
+          break;
+        default:
+          return;
+      }
+      
+      auth.signInWithPopup(authProvider)
+        .then(result => {
+          // Check if user is new
+          if (result.additionalUserInfo.isNewUser) {
+            // Save new user to Firestore
+            return db.collection('users').doc(result.user.uid).set({
+              name: result.user.displayName,
+              email: result.user.email,
+              createdAt: new Date(),
+              lastLogin: new Date(),
+              role: 'user'
+            });
+          } else {
+            // Update last login for existing user
+            return db.collection('users').doc(result.user.uid).update({
+              lastLogin: new Date()
+            });
+          }
+        })
+        .then(() => {
+          authModal.classList.remove('active');
+          showToast("Successfully signed in!");
+        })
+        .catch(error => {
+          showToast(`Sign in failed: ${error.message}`, false);
+        });
+    }
+    
+    // Add event listeners for social buttons
+    document.getElementById('google-signin').addEventListener('click', () => socialSignIn('google'));
+    document.getElementById('github-signin').addEventListener('click', () => socialSignIn('github'));
+    document.getElementById('twitter-signin').addEventListener('click', () => socialSignIn('twitter'));
+    document.getElementById('google-signup').addEventListener('click', () => socialSignIn('google'));
+    document.getElementById('github-signup').addEventListener('click', () => socialSignIn('github'));
+    document.getElementById('twitter-signup').addEventListener('click', () => socialSignIn('twitter'));
+    
+    // Toast notification function
     function showToast(message, isSuccess = true) {
       toastMessage.textContent = message;
-      toast.className = "toast " + (isSuccess ? "success" : "error");
-      toast.classList.add("show");
-
+      toast.className = `toast ${isSuccess ? 'success' : 'error'}`;
+      toast.classList.add('show');
+      
       setTimeout(() => {
-        toast.classList.remove("show");
+        toast.classList.remove('show');
       }, 3000);
     }
     
@@ -1306,12 +1856,8 @@
       }
     }
 
-    // Alle bestaande JavaScript functies blijven behouden
-    // ... (behoud alle overige JavaScript code) ...
-    
-    // Initialize
+    // Initialize floating particles
     document.addEventListener("DOMContentLoaded", function () {
-      // Bestaande initialisatie code
       const container = document.body;
       const particleCount = 30;
       

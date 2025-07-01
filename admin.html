@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
@@ -358,10 +359,167 @@
         gap: 5px;
       }
     }
+
+    /* Auth styles */
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(15, 12, 41, 0.6);
+      padding: 8px 15px;
+      border-radius: 30px;
+      border: 1px solid rgba(0, 201, 255, 0.3);
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+    
+    .user-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      overflow: hidden;
+    }
+    
+    .user-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .logout-btn {
+      background: transparent;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 5px;
+    }
+    
+    .logout-btn:hover {
+      color: var(--secondary);
+      transform: scale(1.1);
+    }
+    
+    /* Login overlay */
+    .login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 8, 30, 0.95);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .login-form {
+      background: rgba(25, 20, 60, 0.95);
+      border-radius: 20px;
+      padding: 40px;
+      width: 90%;
+      max-width: 400px;
+      border: 2px solid var(--secondary);
+      box-shadow: 0 0 50px rgba(0, 201, 255, 0.3);
+      position: relative;
+    }
+    
+    .login-form h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--accent);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+    }
+    
+    .login-form .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .login-form input {
+      width: 100%;
+      padding: 15px;
+      border-radius: 10px;
+      background: rgba(15, 12, 41, 0.7);
+      border: 1px solid rgba(0, 201, 255, 0.3);
+      color: var(--light);
+      font-size: 1rem;
+    }
+    
+    .login-form input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+    }
+    
+    .login-submit {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+    
+    .login-submit:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 20px rgba(74, 0, 224, 0.5);
+    }
+    
+    .login-error {
+      color: #ff4d4d;
+      margin-top: 10px;
+      text-align: center;
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <div id="admin-dashboard">
+  <!-- Login Overlay (shown when not authenticated) -->
+  <div class="login-overlay" id="login-overlay">
+    <div class="login-form">
+      <h2><i class="fas fa-user-shield"></i> Admin Login</h2>
+      <div class="form-group">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" placeholder="admin@beansstudio.com">
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" placeholder="Your password">
+      </div>
+      <button class="login-submit" id="login-btn">
+        <i class="fas fa-sign-in-alt"></i> Sign In
+      </button>
+      <div class="login-error" id="login-error">
+        Invalid credentials or you don't have admin privileges
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard (shown when authenticated) -->
+  <div id="admin-dashboard" style="display:none;">
+    <div class="user-info" id="user-info">
+      <div class="user-avatar">
+        <i class="fas fa-user"></i>
+      </div>
+      <span id="user-email"></span>
+      <button class="logout-btn" id="logout-btn" title="Logout">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+    
     <div class="admin-container">
       <div class="admin-header">
         <h1><i class="fas fa-user-shield"></i> BEANS STUDIO ADMIN PANEL</h1>
@@ -517,7 +675,7 @@
   </div>
 
   <script>
-    // Firebase configuration (replace with your actual config)
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyAwuXJVVj8hXspC6eT5o6eQw6ayEoeCulo",
       authDomain: "friendly-path-408913.firebaseapp.com",
@@ -532,8 +690,19 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const auth = firebase.auth();
     
     // DOM Elements
+    const loginOverlay = document.getElementById("login-overlay");
+    const adminDashboard = document.getElementById("admin-dashboard");
+    const loginEmail = document.getElementById("login-email");
+    const loginPassword = document.getElementById("login-password");
+    const loginBtn = document.getElementById("login-btn");
+    const loginError = document.getElementById("login-error");
+    const logoutBtn = document.getElementById("logout-btn");
+    const userInfo = document.getElementById("user-info");
+    const userEmail = document.getElementById("user-email");
+    
     const toast = document.getElementById("toast");
     const toastMessage = document.getElementById("toast-message");
     const newsletterForm = document.getElementById("newsletter-form");
@@ -828,18 +997,54 @@
       }
       
       try {
-        console.log("Sending newsletter:", {
+        // Show loading state
+        const sendBtn = document.querySelector("#newsletter-form [type='submit']");
+        const originalBtnText = sendBtn.innerHTML;
+        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        sendBtn.disabled = true;
+        
+        // Get subscribers based on segment
+        let subscribersQuery = db.collection("subscribers");
+        
+        if (segment === "active") {
+          // Active subscribers (subscribed in last 90 days)
+          const activeDate = new Date();
+          activeDate.setDate(activeDate.getDate() - 90);
+          subscribersQuery = subscribersQuery.where("subscribedAt", ">", activeDate);
+        } else if (segment === "new") {
+          // New subscribers (last 30 days)
+          const newDate = new Date();
+          newDate.setDate(newDate.getDate() - 30);
+          subscribersQuery = subscribersQuery.where("subscribedAt", ">", newDate);
+        }
+        
+        const snapshot = await subscribersQuery.get();
+        const count = snapshot.size;
+        
+        // Simulate sending process
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Save newsletter to Firestore
+        await db.collection("newsletters").add({
           subject,
           content,
-          segment
+          segment,
+          sentAt: new Date(),
+          recipientCount: count
         });
         
-        showToast(`Newsletter "${subject}" sent to ${segment} subscribers`);
+        // Update UI
+        showToast(`Newsletter "${subject}" sent to ${count} subscribers!`);
         newsletterForm.reset();
         
       } catch (error) {
         showToast("Error sending newsletter: " + error.message, false);
         console.error("Error sending newsletter:", error);
+      } finally {
+        // Restore button state
+        const sendBtn = document.querySelector("#newsletter-form [type='submit']");
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Newsletter';
+        sendBtn.disabled = false;
       }
     }
     
@@ -865,7 +1070,12 @@
       newsletterForm.addEventListener('submit', sendNewsletter);
       
       saveDraftBtn.addEventListener('click', () => {
-        showToast("Draft saved successfully");
+        const subject = document.getElementById("newsletter-subject").value;
+        if (subject) {
+          showToast("Draft saved successfully");
+        } else {
+          showToast("Please add a subject before saving", false);
+        }
       });
       
       prevBtn.addEventListener('click', () => {
@@ -885,9 +1095,90 @@
       });
     }
     
+    // Authentication functions
+    function checkAuthState() {
+      auth.onAuthStateChanged(user => {
+        if (user && user.email === "admin@beansstudio.com") {
+          // Admin user authenticated
+          loginOverlay.style.display = "none";
+          adminDashboard.style.display = "block";
+          userEmail.textContent = user.email;
+          initDashboard();
+        } else {
+          // Not authenticated or not admin
+          loginOverlay.style.display = "flex";
+          adminDashboard.style.display = "none";
+        }
+      });
+    }
+    
+    // Login function
+    function login() {
+      const email = loginEmail.value;
+      const password = loginPassword.value;
+      
+      if (!email || !password) {
+        loginError.textContent = "Please enter both email and password";
+        loginError.style.display = "block";
+        return;
+      }
+      
+      // Show loading state
+      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+      loginBtn.disabled = true;
+      
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          // Check if user is admin
+          if (auth.currentUser.email === "admin@beansstudio.com") {
+            showToast("Welcome back, Admin!");
+          } else {
+            // Not admin - sign out
+            auth.signOut();
+            loginError.textContent = "You don't have admin privileges";
+            loginError.style.display = "block";
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+            loginBtn.disabled = false;
+          }
+        })
+        .catch(error => {
+          loginError.textContent = error.message;
+          loginError.style.display = "block";
+          loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+          loginBtn.disabled = false;
+        });
+    }
+    
+    // Logout function
+    function logout() {
+      auth.signOut()
+        .then(() => {
+          showToast("You have been logged out");
+          loginOverlay.style.display = "flex";
+          adminDashboard.style.display = "none";
+          loginEmail.value = "";
+          loginPassword.value = "";
+        })
+        .catch(error => {
+          showToast("Logout failed: " + error.message, false);
+        });
+    }
+    
     // Initialize when page loads
     document.addEventListener('DOMContentLoaded', () => {
-      initDashboard();
+      // Set up event listeners
+      loginBtn.addEventListener('click', login);
+      logoutBtn.addEventListener('click', logout);
+      
+      // Allow pressing Enter to login
+      loginPassword.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          login();
+        }
+      });
+      
+      // Check authentication state
+      checkAuthState();
     });
   </script>
 </body>
